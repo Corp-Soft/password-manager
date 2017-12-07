@@ -1,0 +1,9 @@
+[package]
+name = "le-chiffre"
+version = "0.1.0"
+authors = ["arturovt <arthurandrosovich@gmail.com>"]
+
+[dependencies]
+clap = "2.28.0"
+rand = "0.3.18"
+rpassword = "1.0.0"
