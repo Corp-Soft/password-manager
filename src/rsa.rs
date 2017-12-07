@@ -35,7 +35,7 @@ pub mod rsa {
 
     pub fn generate_RSA_keys() -> (PublicKey, PrivateKey) {
         // RSA
-        // Генерируем 2 простых числа `p`, `q`
+        // Generate 2 prime numbers `p`, `q`
         let mut p: u64 = rand::thread_rng().gen_range(1, 30);
         let mut q: u64 = rand::thread_rng().gen_range(1, 30);
 
@@ -59,21 +59,15 @@ pub mod rsa {
             }
         }
 
-        println!("Сгенерировал простые числа `p` и `q`: {}, {}", p, q);
-
-        // Вычисляем модуль n = p * q
+        // Calculate module n = p * q
         let n: u64 = p * q;
 
-        println!("Сгенерировал модуль n = p * q: {}", n);
-
-        // Вычисляем функцию Эйлера
+        // Calculate Euler function
         let euler: u64 = (p - 1) * (q - 1);
 
-        println!("Вычислил функцию Эейлера ф(n) = (p - 1) * (q - 1): {}", euler);
-
-        // Вычисляем открытую экспоненту `e`
-        // должна лежать в интервале 1 < e < ϕ(n)
-        // а также быть взаимно простым со значением ф(n)
+        // Calculate open exponent `e`
+        // should be in then interval 1 < e < ϕ(n)
+        // and also be relatively prime to the value φ (n)
         let mut e: u64 = rand::thread_rng().gen_range(1, 999);
 
         if !relatively_prime(e, euler) || e > euler {
@@ -86,9 +80,7 @@ pub mod rsa {
             }
         }
 
-        println!("Вычислил открытую экспоненту `e`: {}", e);
-
-        // Вычисляем секретную экспоненту `d`
+        // Calculate secret exponent `d`
         let mut d: u64 = rand::thread_rng().gen_range(1, 999);
 
         if (d * e) % euler != 1 {
@@ -101,11 +93,7 @@ pub mod rsa {
             }
         }
 
-        println!("Вычислил секретную экспоненту `d`: {}", d);
-
-        // Пара (e, n) - открытый ключ, (d, n) - закрытый
-
-        println!("Открытый ключ (e, n): ({}, {}), закрытый ключ (d, n): ({}, {})", e, n, d, n);
+        // Pair (e, n) - public key, (d, n) - private
 
         (PublicKey::new(&e, &n), PrivateKey::new(&d, &n))
     }

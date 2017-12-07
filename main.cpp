@@ -71,6 +71,8 @@ char* get_os() {
 }
 
 pair<PublicKey, PrivateKey> generate_RSA_keys() {
+    srand(static_cast<int>(time(NULL)));
+
     // RSA
     // Generate 2 prime numbers `p`, `q`
     unsigned int p = rand() % 1 + 30;
@@ -129,6 +131,8 @@ pair<PublicKey, PrivateKey> generate_RSA_keys() {
             }
         }
     }
+
+    // Pair (e, n) - public key, (d, n) - private
 
     PublicKey public_key;
     public_key.e = e;
