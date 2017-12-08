@@ -3,6 +3,8 @@ extern crate rpassword;
 
 use clap::{Arg, App};
 
+mod aes;
+
 fn main() -> () {
     let matches = App::new("le-chiffre")
         .version("0.1.0")
