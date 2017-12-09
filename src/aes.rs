@@ -10,7 +10,7 @@ use std::str;
 use std::io;
 use std::mem;
 
-fn string_to_static_str(s: String) -> &'static str {
+pub fn string_to_static_str(s: String) -> &'static str {
     unsafe {
         let ret = mem::transmute(&s as &str);
         mem::forget(s);
@@ -35,6 +35,7 @@ pub fn test() -> () {
     rng.fill_bytes(&mut iv);
 
     let encrypted_data: Vec<u8> = encrypt(message.as_bytes(), &key, &iv).ok().unwrap();
+    println!("Зашифровал {}", String::from_utf8_lossy(&encrypted_data));
     let decrypted_data: Vec<u8> = decrypt(&encrypted_data[..], &key, &iv).ok().unwrap();
     println!("Расшифровал: {}", str::from_utf8(&decrypted_data).unwrap());
 }

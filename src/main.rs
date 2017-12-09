@@ -1,56 +1,73 @@
-extern crate clap;
 extern crate rpassword;
 
-use clap::{Arg, App};
+use std::env;
 
 mod aes;
 
 fn main() -> () {
-    let matches = App::new("le-chiffre")
-        .version("0.1.0")
-        .author("@overthesanity <arthurandrosovich@gmail.com>")
-        .arg(
-            Arg::with_name("generate")
-                .short("g")
-                .long("generate")
-                .help("generates hash on given password and stores in buffer")
-                .takes_value(true)
-        )
-        .arg(
-            Arg::with_name("find")
-                .short("f")
-                .long("find")
-                .help("finds password by provided url")
-                .takes_value(true)
-        )
-        .arg(
-            Arg::with_name("list")
-                .short("l")
-                .long("list")
-                .help("lists all passwords")
-                .takes_value(true)
-        )
-        .arg(
-            Arg::with_name("config")
-                .short("c")
-                .long("config")
-                .help("setup configuration")
-                .takes_value(true)
-        )
-        .get_matches();
+    let args: Vec<String> = env::args().collect();
 
-    if matches.is_present("generate") {
-        let generate: &str = matches.value_of("generate").unwrap();
-        println!("Generate is {}", generate);
-    } else if matches.is_present("find") {
-        let find: &str = matches.value_of("find").unwrap();
-    } else if matches.is_present("list") {
-        let list: &str = matches.value_of("list").unwrap();
-        println!("List is {}", list);
-    } else if matches.is_present("config") {
-        let config: &str = matches.value_of("config").unwrap();
+    match args.len() {
+        2 => {
+            let query: &str = &args[1] as &str;
+            
+            match query {
+                "list" => {
+
+                }
+
+                _ => {
+                    println!("le-chiffre: Invalid option!");
+                }
+            }
+        }
+
+        3 => {
+            let (query, argument) = parse_config(&args);
+
+            match query {
+                "generate" => {
+                    if parse_url(argument) {
+
+                    } else {
+                        println!("le-chiffre: You've provided invalid url!");
+                    }
+                }
+
+                _ => {
+                    println!("le-chiffre: You've provided incorrent option!");
+                }
+            }
+        }
+
+        _ => {
+            println!("le-chiffre 0.1.0");
+            println!("@overthesanity <arthurandrosovich@gmail.com>");
+            println!("\nUSAGE:");
+            println!("  le-chiffre [OPTIONS]");
+            println!("\nOPTIONS:");
+            println!("  generate <url>");
+            println!("  find <url>");
+            println!("  list");
+            println!("  config <config>");
+        }
+    }
+}
+
+fn parse_config(args: &[String]) -> (&str, &str) {
+    let query = &args[1];
+    let argument = &args[2];
+
+    (query, argument)
+}
+
+fn parse_url(url: &str) -> bool {
+    let mut split = url.split(".");
+    let vec = split.collect::<Vec<&str>>();
+
+    if vec.len() > 1 {
+        return true;
     } else {
-        //print!("Введите пароль: ");
-        //let pass: &str = rpassword::read_password().unwrap();
+        return false;
     }
 }
