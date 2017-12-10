@@ -1,9 +1,14 @@
 extern crate rpassword;
+
 extern crate rand;
+use rand::{ OsRng, Rng };
+
+extern crate clipboard;
+use clipboard::ClipboardProvider;
+use clipboard::ClipboardContext;
 
 #[macro_use]
 extern crate serde_derive;
-
 extern crate serde;
 extern crate serde_json;
 
@@ -11,14 +16,12 @@ use std::env;
 use std::str;
 use std::fs::File;
 use std::io::prelude::*;
-use std::fmt;
 use std::error::Error;
 use std::path::Path;
 
-use rand::{ OsRng, Rng };
-
 mod aes;
 
+#[derive(Serialize, Deserialize, Debug)]
 struct Chiffre {
     url: String,
     password: String
@@ -52,7 +55,7 @@ fn main() -> () {
             match option {
                 "generate" => {
                     if parse_url(argument) {
-
+                        generate_password(argument);
                     } else {
                         println!("le-chiffre: You've provided invalid url!");
                     }
@@ -126,7 +129,7 @@ fn read_key_iv_file() -> ([u8; 32], [u8; 16]) {
     let mut s: String = String::new();
 
     match file.read_to_string(&mut s) {
-        Err(why) => panic!("couldn't read {}: {}", display, why.description()),
+        Err(why) => panic!("le-chiffre: Couldn't read {}: {}", display, why.description()),
         Ok(_) => ()
     }
 
@@ -195,4 +198,23 @@ fn create_key_iv_file() -> () {
     let key_iv_writable = format!("{:?}\n{:?}", key, iv);
 
     file.write_all(key_iv_writable.as_bytes());;
+}
+
+fn copy_to_clipboard(password: String) {
+    let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
+    ctx.set_contents(password).expect("Unable to write to clipboard.");
+}
+
+fn generate_password(url: &str) {
+    let password = rand::thread_rng()
+        .gen_ascii_chars()
+        .take(10)
+        .collect::<String>();
+
+    let chiffre = Chiffre {
+        url: url.to_string(),
+        password: password
+    };
+
+    copy_to_clipboard(chiffre.password.to_owned());
 }

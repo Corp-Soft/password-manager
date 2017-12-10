@@ -5,7 +5,6 @@ use self::crypto::{ symmetriccipher, buffer, aes, blockmodes };
 use self::crypto::buffer::{ ReadBuffer, WriteBuffer, BufferResult };
 
 use std::str;
-use std::io;
 use std::mem;
 
 pub fn string_to_static_str(s: String) -> &'static str {
