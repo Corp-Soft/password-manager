@@ -21,7 +21,12 @@ use std::error::Error;
 
 pub fn write_linux(s: &str) -> Result<(), String> {
     match Command::new("which").arg("xclip").status() {
-        Ok(status) => if !status.success() { return Err("missing xclip program".to_string()) },
+        Ok(status) => {
+            if !status.success() {
+                return Err("le-chiffre: Please install xclip!".to_string())
+            }
+        },
+
         Err(e) => return Err(e.description().to_string())
     }
 
