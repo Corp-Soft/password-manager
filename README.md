@@ -9,7 +9,12 @@
 
     $ sudo apt install xlip
 
-<p>Once you've ready to start, you have to clone this project and install package manager for Rust - <code>Cargo</code>.</p>
+<p>As this is Rust project - you should have package manager for Rust - <code>Cargo</code>, install it with</p>
+
+    $ curl -sSf https://static.rust-lang.org/rustup.sh | sh
+    $ cargo -V
+
+<p>Once you've ready to start, you have to clone this project and do the following</p>
 
 ```bash
 $ git clone https://github.com/Corp-Soft/password-manager.git
