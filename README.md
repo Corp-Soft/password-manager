@@ -9,7 +9,7 @@
 
     $ sudo apt install xlip
 
-<p>As this is Rust project - you should have package manager for Rust - <code>Cargo</code>, install it with</p>
+<p>As this is a Rust project - you should have package manager for Rust - <code>Cargo</code>, install it with</p>
 
     $ curl -sSf https://static.rust-lang.org/rustup.sh | sh
     $ cargo -V
