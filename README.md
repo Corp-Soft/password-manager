@@ -4,6 +4,13 @@
 <p>This tool is still in development mode.</p>
 <h2>Getting started</h2>
 <p>These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.</p>
-<h3>Installing</h3>
+<h3>Installing on UNIX</h3>
+<p>First, make sure you have installed <code>xlip</code>, if not </p>
 
-    $ cargo build --release
+    $ sudo apt install xlip
+
+<p>Once you've ready to start, you have to clone this project and install package manager for Rust - <code>Cargo</code>.</p>
+
+    $ git clone https://github.com/Corp-Soft/password-manager.git
+    $ cd password-manager
+    $ cargo build

@@ -8,6 +8,7 @@ extern crate serde_derive;
 extern crate serde;
 #[macro_use]
 extern crate serde_json;
+use serde_json::{ Value };
 
 use std::env;
 use std::str;
@@ -15,7 +16,7 @@ use std::fs::{ File, create_dir };
 use std::io::prelude::*;
 use std::error::Error;
 use std::path::Path;
-use std::process::Command;
+use std::process::{ exit, Command };
 use std::clone::Clone;
 
 mod aes;
@@ -27,24 +28,20 @@ struct Chiffre {
     password: String
 }
 
-#[derive(Serialize, Deserialize)]
-struct Data {
-    passwords: Vec<Chiffre>
-}
-
-const USAGE: &str = "
-le-chiffre 0.1.0
+const USAGE: &str = "le-chiffre 0.1.0
 @overthesanity <arthurandrosovich@gmail.com>
 
-USAGE:
-    le-chiffre [OPTIONS]
+Usage: le-chiffre COMMAND
 
-OPTIONS:
-    generate <url>
-    find <url>
-    list
-    config <config>
-";
+Fast and secure command line tool for generating random passwords
+
+Options:
+    -g, generate string   Generate random hash, store in encrypted file and copy to clipboard
+    -f, find string       Find necessary password for given URL and copy to clipboard 
+    -l, list              List all available passwords   
+    -v, version           Print version information and quit";
+
+const VERSION: &str = "le-chiffre version 0.0.1@alpha";
 
 fn main() -> () {
     let args: Vec<String> = env::args().collect();
@@ -55,8 +52,12 @@ fn main() -> () {
             let query: &str = &args[1] as &str;
             
             match query {
-                "list" => {
+                "list" | "-l" => {
+                    
+                }
 
+                "version" | "-v" => {
+                    println!("{}", VERSION);
                 }
 
                 _ => {
@@ -72,9 +73,17 @@ fn main() -> () {
             let (option, argument) = parse_config(&args);
 
             match option {
-                "generate" => {
+                "generate" | "-g" => {
                     if parse_url(argument) {
                         generate_password(argument);
+                    } else {
+                        println!("le-chiffre: You've provided invalid url!");
+                    }
+                }
+
+                "find" | "-f" => {
+                    if parse_url(argument) {
+                        find_password(argument);
                     } else {
                         println!("le-chiffre: You've provided invalid url!");
                     }
@@ -186,20 +195,26 @@ fn iv_vec_to_array(vector: Vec<u8>) -> [u8; 16] {
 // we fill those arrays with random bytes and store in file
 // in the nearby future we will use these arrays for encryption and vice versa
 fn create_key_iv_file(username: String) -> () {
-    let path = Path::new(aes::string_to_static_str(format!("/home/{}/.le-chiffre/password-manager.key", username)));
-    let mut file = File::create(&path).unwrap();
+    if cfg!(target_os = "windows") {
 
-    let mut key: [u8; 32] = [0; 32];
-    let mut iv: [u8; 16] = [0; 16];
+    } else {
+        if !Path::new(aes::string_to_static_str(format!("/home/{}/.le-chiffre/password-manager.key", username.clone()))).exists() {
+            let path = Path::new(aes::string_to_static_str(format!("/home/{}/.le-chiffre/password-manager.key", username)));
+            let mut file = File::create(&path).unwrap();
 
-    let mut rng = OsRng::new().ok().unwrap();
+            let mut key: [u8; 32] = [0; 32];
+            let mut iv: [u8; 16] = [0; 16];
 
-    rng.fill_bytes(&mut key);
-    rng.fill_bytes(&mut iv);
+            let mut rng = OsRng::new().ok().unwrap();
 
-    let key_iv_writable = format!("{:?}\n{:?}", key, iv);
+            rng.fill_bytes(&mut key);
+            rng.fill_bytes(&mut iv);
 
-    file.write_all(key_iv_writable.as_bytes()).expect("le-chiffre: An error occured | tried to write file!");
+            let key_iv_writable = format!("{:?}\n{:?}", key, iv);
+
+            file.write_all(key_iv_writable.as_bytes()).expect("le-chiffre: An error occured | tried to write file!");
+        }
+    }
 }
 
 fn copy_to_clipboard(password: String) {
@@ -235,21 +250,110 @@ fn generate_password(url: &str) {
         // reading key and iv
         let (key, iv) = read_key_iv_file(username.clone());
 
-        let chiffre = json!({
-            "url": url.to_string(),
-            "password": password
-        });
+        if Path::new(aes::string_to_static_str(format!("/home/{}/.le-chiffre/passwords", username.clone()))).exists() {
+            let decrypted_data: Vec<u8> = aes::decrypt(&read_passwords_file(username.clone()), &key, &iv).ok().unwrap();
+            let mut v: Value = serde_json::from_str(aes::string_to_static_str(String::from_utf8(decrypted_data).unwrap())).unwrap();
+            let current_passwords = v.as_array_mut().unwrap();
+            
+            for i in current_passwords.clone() {
+                if i["url"] == url.to_string() {
+                    println!("le-chiffre: Password for that url is already generated!");
+                    exit(0x0100);
+                }
+            }
 
-        let passwords_path = Path::new(aes::string_to_static_str(format!("/home/{}/.le-chiffre/passwords", username)));
-        let mut file = File::create(&passwords_path).unwrap();
+            let chiffre = json!({
+                "url": url.to_string(),
+                "password": password.clone()
+            });
 
-        let encrypted_data: Vec<u8> = aes::encrypt(chiffre.to_string().as_bytes(), &key, &iv).ok().unwrap();
+            current_passwords.push(chiffre);
 
-        file.write_all(String::from_utf8_lossy(&encrypted_data.clone()).as_bytes()).expect("le-chiffre: An error occured | tried to write password!");
+            let encrypted_data: Vec<u8> = aes::encrypt(json!(current_passwords).to_string().as_bytes(), &key, &iv).ok().unwrap();
 
-        copy_to_clipboard(chiffre["password"].to_string().replace("\"", ""));
+            write_passwords(username.clone(), encrypted_data);
 
-        let decrypted_data: Vec<u8> = aes::decrypt(&encrypted_data[..], &key, &iv).ok().unwrap();
-        println!("{}", String::from_utf8_lossy(&decrypted_data));
+            println!("le-chiffre: Generated password for {} => {}", url, password.clone());
+
+            copy_to_clipboard(password.clone());
+        } else {
+            let mut current_passwords = Vec::new();
+            
+            let chiffre = json!({
+                "url": url.to_string(),
+                "password": password.clone()
+            });
+
+            current_passwords.push(chiffre);
+
+            let encrypted_data: Vec<u8> = aes::encrypt(json!(current_passwords).to_string().as_bytes(), &key, &iv).ok().unwrap();
+
+            write_passwords(username.clone(), encrypted_data);
+
+            println!("le-chiffre: Generated password for {} => {}", url, password.clone());
+
+            copy_to_clipboard(password.clone());
+        }
+    }
+}
+
+fn write_passwords(username: String, encrypted_data: Vec<u8>) -> () {
+    let path = Path::new(aes::string_to_static_str(format!("/home/{}/.le-chiffre/passwords", username)));
+    let mut file = File::create(&path).unwrap();
+
+    let passwords_writable = format!("{:?}", encrypted_data);
+
+    file.write_all(passwords_writable.as_bytes()).expect("le-chiffre: An error occured | tried to write file!");
+}
+
+fn read_passwords_file(username: String) -> Vec<u8> {
+    let path = Path::new(aes::string_to_static_str(format!("/home/{}/.le-chiffre/passwords", username)));
+    let display = path.display();
+
+    let mut file = match File::open(&path) {
+        Err(why) => {
+            panic!("le-chiffre: Couldn't open {}: {}", display, why.description())
+        }
+
+        Ok(file) => file
+    };
+
+    let mut s: String = String::new();
+
+    match file.read_to_string(&mut s) {
+        Err(why) => panic!("le-chiffre: Couldn't read {}: {}", display, why.description()),
+        Ok(_) => ()
+    }
+
+    parse_string_to_vec(aes::string_to_static_str(s))
+}
+
+fn find_password(url: &str) -> () {
+    if cfg!(target_os = "windows") {
+
+    } else {
+        println!("le-chiffre: You're searching password for url: {}", url);
+        let output = Command::new("whoami").output().expect("le-chiffre: An error occured | tried to run `whoami`");
+        let mut username: String = String::from_utf8(output.stdout).unwrap();
+        username = username.replace("\n", "");
+
+        let (key, iv) = read_key_iv_file(username.clone());
+
+        let decrypted_data: Vec<u8> = aes::decrypt(&read_passwords_file(username.clone()), &key, &iv).ok().unwrap();
+        let v: Value = serde_json::from_str(aes::string_to_static_str(String::from_utf8(decrypted_data).unwrap())).unwrap();
+        let mut searchable_password: String = String::new();
+
+        for i in v.as_array().unwrap() {
+            if i["url"] == url.to_string() {
+                searchable_password = i["password"].to_string().replace("\"", "");
+            }
+        }
+
+        if searchable_password.len() > 0 {
+            println!("le-chiffre: I've found: {}", searchable_password);
+            copy_to_clipboard(searchable_password);
+        } else {
+            println!("le-chiffre: Sorry, I haven't found anything for that url!");
+        }
     }
 }
