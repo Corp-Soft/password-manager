@@ -1,0 +1,7 @@
+language: rust
+
+rust:
+  - 1.22.1
+  - nightly
+
+script: cargo test
