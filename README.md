@@ -13,4 +13,7 @@
 
     $ git clone https://github.com/Corp-Soft/password-manager.git
     $ cd password-manager
-    $ cargo build
+    $ cargo build --release
+    $ cp target/release/le-chiffre /home/username // or anywhere where you want execute script from
+    $ cd ~/username
+    $ sudo chmod +x ./le-chiffre
