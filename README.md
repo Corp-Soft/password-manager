@@ -12,10 +12,11 @@
 <p>Once you've ready to start, you have to clone this project and install package manager for Rust - <code>Cargo</code>.</p>
 
 ```bash
-    $ git clone https://github.com/Corp-Soft/password-manager.git
-    $ cd password-manager
-    $ cargo build --release
-    $ sudo cp target/release/le-chiffre /home/username // or anywhere where you want execute script from
-    $ cd ~/username
-    $ sudo chmod +x ./le-chiffre
+$ git clone https://github.com/Corp-Soft/password-manager.git
+$ cd password-manager
+$ cargo build --release
+$ sudo cp target/release/le-chiffre /home/username // or anywhere where you want execute script from
+$ cd ~/username
+$ sudo chmod +x ./le-chiffre
+$ ./le-chiffre
 ```
