@@ -51,7 +51,7 @@ fn main() -> () {
             
             match query {
                 "list" | "-l" => {
-                    
+                    list_passwords();
                 }
 
                 "version" | "-v" => {
@@ -358,5 +358,33 @@ fn find_password(url: &str) -> () {
         copy_to_clipboard(searchable_password);
     } else {
         println!("le-chiffre: Sorry, I haven't found anything for that url!");
+    }
+}
+
+// List all available passwords
+fn list_passwords() -> () {
+    println!("le-chiffre: You wanna list all passwords!");
+    let output = Command::new("whoami").output().expect("le-chiffre: An error occured | tried to run `whoami`");
+    let mut username: String = String::from_utf8(output.stdout).unwrap();
+    username = username.replace("\n", "");
+
+    // reading key and initializing vector
+    let (key, iv) = read_key_iv_file(username.clone());
+
+    // decrypting
+    let decrypted_data: Vec<u8> = aes::decrypt(&read_passwords_file(username.clone()), &key, &iv).ok().unwrap();
+    // deserialize vector to json using `serde` library
+    let v: Value = serde_json::from_str(aes::string_to_static_str(String::from_utf8(decrypted_data).unwrap())).unwrap();
+    let data = v.as_array().unwrap();
+
+    if data.len() > 0 {
+        println!("le-chiffre: I've found data with length {}\n", data.len());
+        for i in data {
+            let password = i["password"].to_string().replace("\"", "");
+            let url = i["url"].to_string().replace("\"", "");
+            println!("le-chiffre: password => {}, url => {}", password, url);
+        }
+    } else {
+        println!("le-chiffre: You don't have any password generated yet!");
     }
 }
