@@ -5,14 +5,18 @@
 <h2>Getting started</h2>
 <p>These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.</p>
 <h3>Installing on UNIX</h3>
-<p>First, make sure you have installed <code>xlip</code>, if not </p>
+<p>First, make sure you have installed <code>xclip</code>, if not </p>
 
-    $ sudo apt install xlip
+```bash
+$ sudo apt install xclip
+```
 
 <p>As this is a Rust project - you should have package manager for Rust - <code>Cargo</code>, install it with</p>
 
-    $ curl -sSf https://static.rust-lang.org/rustup.sh | sh
-    $ cargo -V
+```bash
+$ curl -sSf https://static.rust-lang.org/rustup.sh | sh
+$ cargo -V
+```
 
 <p>Once you've ready to start, you have to clone this project and do the following</p>
 
