@@ -142,7 +142,7 @@ fn read_key_iv_file(username: String) -> ([u8; 32], [u8; 16]) {
         Ok(_) => ()
     }
 
-    let key_iv_data: &'static str = aes::string_to_static_str(s);
+    let key_iv_data: &str = aes::string_to_static_str(s);
 
     let split_key_iv_data = key_iv_data.split("\n");
     let key_iv_vector = split_key_iv_data.collect::<Vec<&str>>();
@@ -212,8 +212,13 @@ fn create_key_iv_file(username: String) -> () {
 }
 
 fn copy_to_clipboard(password: String) {
-    clipboard::write_linux(aes::string_to_static_str(password)).expect("le-chiffre: An error occured | tried to copy to clipboard!");
-    println!("le-chiffre: Copied password to clipboard!");
+    if cfg!(target_os = "linux") {
+        clipboard::write_linux(aes::string_to_static_str(password)).expect("le-chiffre: An error occured | tried to copy to clipboard!");
+        println!("le-chiffre: Copied password to clipboard!");
+    } else if cfg!(target_os = "macos") {
+        clipboard::write_macos(aes::string_to_static_str(password)).expect("le-chiffre: An error occured | tried to copy to clipboard!");
+        println!("le-chiffre: Copied password to clipboard!");
+    }
 }
 
 // Main password generation process
@@ -363,28 +368,33 @@ fn find_password(url: &str) -> () {
 
 // List all available passwords
 fn list_passwords() -> () {
-    println!("le-chiffre: You wanna list all passwords!");
     let output = Command::new("whoami").output().expect("le-chiffre: An error occured | tried to run `whoami`");
     let mut username: String = String::from_utf8(output.stdout).unwrap();
     username = username.replace("\n", "");
 
-    // reading key and initializing vector
-    let (key, iv) = read_key_iv_file(username.clone());
+    if Path::new(aes::string_to_static_str(format!("/home/{}/.le-chiffre", username.clone()))).exists() {
+        println!("le-chiffre: List all passwords!");
 
-    // decrypting
-    let decrypted_data: Vec<u8> = aes::decrypt(&read_passwords_file(username.clone()), &key, &iv).ok().unwrap();
-    // deserialize vector to json using `serde` library
-    let v: Value = serde_json::from_str(aes::string_to_static_str(String::from_utf8(decrypted_data).unwrap())).unwrap();
-    let data = v.as_array().unwrap();
+        // reading key and initializing vector
+        let (key, iv) = read_key_iv_file(username.clone());
 
-    if data.len() > 0 {
-        println!("le-chiffre: I've found data with length {}\n", data.len());
-        for i in data {
-            let password = i["password"].to_string().replace("\"", "");
-            let url = i["url"].to_string().replace("\"", "");
-            println!("le-chiffre: password => {}, url => {}", password, url);
+        // decrypting
+        let decrypted_data: Vec<u8> = aes::decrypt(&read_passwords_file(username.clone()), &key, &iv).ok().unwrap();
+        // deserialize vector to json using `serde` library
+        let v: Value = serde_json::from_str(aes::string_to_static_str(String::from_utf8(decrypted_data).unwrap())).unwrap();
+        let data = v.as_array().unwrap();
+
+        if data.len() > 0 {
+            println!("\n");
+            for i in data {
+                let password = i["password"].to_string().replace("\"", "");
+                let url = i["url"].to_string().replace("\"", "");
+                println!("le-chiffre: password => {}, url => {}", password, url);
+            }
+        } else {
+            println!("le-chiffre: You don't have any password generated yet!");
         }
     } else {
-        println!("le-chiffre: You don't have any password generated yet!");
+        println!("le-chiffre: You haven't generated any password yet to list them!");
     }
 }

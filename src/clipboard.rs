@@ -46,7 +46,7 @@ pub fn write_linux(s: &str) -> Result<(), String> {
     }
 }
 
-/*pub fn write_macos(s: &str) -> Result<(), String> {
+pub fn write_macos(s: &str) -> Result<(), String> {
     let mut child = match Command::new("pbcopy").spawn() {
         Ok(child) => child,
         Err(e) => return Err(e.description().to_string())
@@ -57,8 +57,8 @@ pub fn write_linux(s: &str) -> Result<(), String> {
         None => return Err("unable to get stdin of pbcopy".to_string())
     };
 
-    match stdin.write_str(s) {
+    match stdin.write(s.as_bytes()) {
         Ok(_) => Ok(()),
         Err(e) => return Err(e.description().to_string())
     }
-}*/
+}
