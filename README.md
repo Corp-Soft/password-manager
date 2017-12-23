@@ -5,7 +5,7 @@
 <h2>Getting started</h2>
 <p>These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.</p>
 <h3>Installing on UNIX</h3>
-<p>First, you have to create application on Dropbox, go to <a href="https://www.dropbox.com/developers/apps">apps</a>, click <code>Create app</code>, call it <code>le-chiffre</code>, then click <code>Generate token</code>, you will get access token, next create file somewhere <code>settings.json</code>, and pass token there, e.g.</p>
+<p>First, you have to create application on Dropbox, go to <a href="https://www.dropbox.com/developers/apps">apps</a>, click <code>Create app</code>, call it <code>le-chiffre</code>, then click <code>Generate token</code>, you will get access token, next create file somewhere you will execute package from<code>settings.json</code>, and pass token there, e.g.</p>
 
 ```json
 {
