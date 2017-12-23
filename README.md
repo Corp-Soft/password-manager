@@ -30,4 +30,10 @@ $ sudo apt install python3-pip
 ```bash
 $ git clone https://github.com/Corp-Soft/password-manager.git
 $ cd password-manager
+$ sudo pip3 install pyinstaller
+$ pyinstaller le-chiffre/le-chiffre.py // this will bundle python app and its dependencies into a single package
+$ sudo mv dist/main/le-chiffre ~ // move built package to home directory or anywhere you wanna execute it from
+$ cd ~ 
+$ sudo chmod +x ./le-chiffre
+$ ./le-chiffre // run package
 ```
