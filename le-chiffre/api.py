@@ -1,11 +1,11 @@
-import dropbox, json, os
+import dropbox, json, os, sys
 
 def read_token():
     if os.path.exists(os.getcwd() + '/settings.json'):
         return json.load(open('settings.json'))['token']
     else:
         raise Exception('le-chiffre: Please create `settings.json` file and put `token` there!')
-        return None
+        sys.exit(0)
 
 def get_hash():
     client = dropbox.Dropbox(read_token())
