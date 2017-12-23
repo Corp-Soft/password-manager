@@ -5,17 +5,24 @@
 <h2>Getting started</h2>
 <p>These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.</p>
 <h3>Installing on UNIX</h3>
-<p>First, make sure you have installed <code>xclip</code>, if not </p>
+<p>First, you have to create application on Dropbox, go to <a href="https://www.dropbox.com/developers/apps">apps</a>, click <code>Create app</code>, call it <code>le-chiffre</code>, then click <code>Generate token</code>, you will get access token, next create file somewhere <code>settings.json</code>, and pass token there, e.g.</p>
+
+```json
+{
+    "token": "YOUR ACCESS TOKEN"
+}
+```
+
+<p>Make sure you have installed <code>xclip</code>, if not</p>
 
 ```bash
 $ sudo apt install xclip
 ```
 
-<p>As this is a Rust project - you should have package manager for Rust - <code>Cargo</code>, install it with</p>
+<p>Be sure to use python 3.x version and also install <code>pip</code> package manager specially for python 3.x</p>
 
 ```bash
-$ curl -sSf https://static.rust-lang.org/rustup.sh | sh
-$ cargo -V
+$ sudo apt install python3-pip
 ```
 
 <p>Once you've ready to start, you have to clone this project and do the following</p>
@@ -23,9 +30,4 @@ $ cargo -V
 ```bash
 $ git clone https://github.com/Corp-Soft/password-manager.git
 $ cd password-manager
-$ cargo build --release
-$ sudo cp target/release/le-chiffre ~ // or anywhere where you want execute script from
-$ cd ~
-$ sudo chmod +x ./le-chiffre
-$ ./le-chiffre
 ```
