@@ -22,13 +22,13 @@ Options:
 
 version = 'le-chiffre version 0.0.1@alpha'
 
-# Get option and argument from list of arguments
+# get option and argument from list of arguments
 def parse_config(args):
     option = args[1]
     argument = args[2]
     return option, argument
 
-# Check if programme was called with valid URL
+# check if program was called with valid URL
 def parse_url(url):
     url = url.split('.')
     return len(url) > 1
@@ -45,11 +45,11 @@ def copy_to_clipboard(password):
 
     print('le-chiffre: Copied password to clipboard!')
 
-# Get username if programme is running on Linux either Mac
+# get username if program is running on Linux either Mac
 def get_username():
     return subprocess.getoutput('whoami')
 
-# Main password generation process
+# main password generation process
 def generate_password(url):
     username = get_username()
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10))
@@ -75,7 +75,7 @@ def generate_password(url):
             passwords = aes(hash).encrypt(json.dumps(passwords))
 
             passwords_file = open('/home/{}/.le-chiffre/passwords.enc'.format(username), 'w')
-            passwords_file.write(passwords.decode('utf8'))
+            passwords_file.write(passwords.decode('utf-8'))
             passwords_file.close()
 
             print('le-chiffre: Generated password for {0} => {1}'.format(url, random_password))
@@ -102,13 +102,13 @@ def generate_password(url):
         os.makedirs('/home/{}/.le-chiffre'.format(username))
         # write this encrypted string to file
         passwords_file = open('/home/{}/.le-chiffre/passwords.enc'.format(username), 'w')
-        passwords_file.write(passwords.decode('utf8'))
+        passwords_file.write(passwords.decode('utf-8'))
         passwords_file.close()
 
         print('le-chiffre: Generated password for {0} => {1}'.format(url, random_password))
         copy_to_clipboard(random_password)
 
-# Tryna find password for given URL in encrypted `passwords` file
+# tryna find password for given URL in encrypted `passwords` file
 def find_password(url):
     print('le-chiffre: You\'re searching password for url {}'.format(url))
     username = get_username()
@@ -135,7 +135,7 @@ def find_password(url):
     else:
         print('le-chiffre: You haven\'t generated any password yet to find anything!')
 
-# List all available passwords
+# list all available passwords
 def list_passwords():
     username = get_username()
 
@@ -163,7 +163,7 @@ def main():
     if len(args) == 1:
         print(usage)
 
-    # Check if one option was given in command line
+    # check if one option was given in command line
     elif len(args) == 2:
         if args[1] == '-l' or args[1] == 'list':
             list_passwords()
@@ -174,7 +174,7 @@ def main():
         else:
             print('le-chiffre: Invalid option!')
 
-    # Check if 2 options were given in command line
+    # check if 2 options were given in command line
     # e.g. le-chiffre generate <url>
     # name of executed file is always the first argument
     elif len(args) == 3:

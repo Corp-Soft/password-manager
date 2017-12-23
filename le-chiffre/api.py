@@ -6,7 +6,8 @@ def read_token():
     if os.path.exists(os.getcwd() + '/settings.json'):
         return json.load(open('settings.json'))['token']
     else:
-        return 'le-chiffre: Please create `settings.json` file and put `token` there!'
+        raise Exception('le-chiffre: Please create `settings.json` file and put `token` there!')
+        return None
 
 def get_hash():
     client = dropbox.Dropbox(read_token())
