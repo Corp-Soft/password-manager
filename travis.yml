@@ -1,7 +1,13 @@
-language: rust
+language: python
 
-rust:
-  - 1.22.1
-  - nightly
+python:
+  - '3.5'
+  - '3.6'
 
-script: cargo test
+before_install:
+  - sudo apt install python3-pip
+
+install:
+  - sudo pip3 install -r requirements.txt --use-mirrors
+
+script: python3 -m unittest tests/tests.py
