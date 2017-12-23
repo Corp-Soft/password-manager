@@ -1,10 +1,4 @@
-import sys
-import os
-import subprocess
-import json
-import api
-import random
-import string
+import sys, os, subprocess, json, api, random, string
 from aes import aes
 
 usage = '''le-chiffre 0.1.0

@@ -1,6 +1,4 @@
-import dropbox
-import json
-import os
+import dropbox, json, os
 
 def read_token():
     if os.path.exists(os.getcwd() + '/settings.json'):
