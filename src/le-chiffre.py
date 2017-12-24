@@ -10,9 +10,10 @@ Fast and secure command line tool for generating random passwords
 
 Options:
     -g, generate <url>    Generate random hash, store in encrypted file and copy to clipboard
-    -f, find <url>        Find necessary password for given URL and copy to clipboard 
-    -l, list              List all available passwords   
-    -v, version           Print version information and quit'''
+    -f, find <url>        Find necessary password for given URL and copy to clipboard
+    -l, list              List all available passwords
+    -v, version           Print version information and quit
+    set config min_password_length <number>'''
 
 version = 'le-chiffre version 0.0.1@alpha'
 
@@ -43,10 +44,25 @@ def copy_to_clipboard(password):
 def get_username():
     return subprocess.getoutput('whoami')
 
+def get_min_password_length():
+    username = get_username()
+
+    if os.path.exists(os.getcwd() + '/settings.json'):
+        data = json.load(open('settings.json'))
+
+        if 'min_password_length' in data:
+            return data['min_password_length']
+
+        else:
+            return 10
+
+    else:
+        return 10
+
 # main password generation process
 def generate_password(url):
     username = get_username()
-    random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10))
+    random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(get_min_password_length()))
 
     if os.path.exists('/home/{}/.le-chiffre'.format(username)):
         encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
@@ -151,6 +167,22 @@ def list_passwords():
     else:
         print('le-chiffre: You haven\'t generated any password yet to list them!')
 
+# setup additional configuration
+def set_password_length(length):
+    username = get_username()
+
+    if os.path.exists(os.getcwd() + '/settings.json'):
+        data = json.load(open('settings.json'))
+
+        data['min_password_length'] = length
+        settings_file = open('settings.json', 'w')
+        settings_file.write(json.dumps(data, sort_keys=True, indent=4))
+        settings_file.close()
+        print('le-chiffre: Established `min_password_length` to => {}'.format(length))
+
+    else:
+        print('le-chiffre: Please create `settings.json` file and put `token` there!')
+
 def main(): 
     args = sys.argv
 
@@ -188,6 +220,13 @@ def main():
 
         else:
             print('le-chiffre: You\'ve provided incorrent option!')
+
+    # length of arguments for configuration
+    elif len(args) == 5:
+        option, argument = parse_config(args[-3:])
+
+        if option == 'min_password_length':
+            set_password_length(int(argument))
 
 if __name__ == '__main__':
     main()
