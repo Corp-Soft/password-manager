@@ -91,7 +91,7 @@ le-chiffre
 
 | Description | Usage |
 | ----------- | ----- |
-| Generate random hash, store in encrypted file and copy to clipboard | <code>le-chiffre -g || generate {URL}</code> |
+| Generate random hash, store in encrypted file and copy to clipboard | <code>le-chiffre -g OR generate {URL}</code> |
 
 
 <table>
