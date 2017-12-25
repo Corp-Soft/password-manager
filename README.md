@@ -1,6 +1,15 @@
-<h1 align="center">
+<p align="center">
     <img src="https://dewey.tailorbrands.com/production/brand_version_mockup_image/673/441186673_a4693e27-0973-4ad6-a875-7e165c0d8eee.png?cb=1512853920">
-</h1>
+</p>
+<p align="center">A command line tool for generating random passwords</p>
+
+<hr>
+
+<p align="center">
+    <a href="https://github.com/Corp-Soft/password-manager/blob/master/LICENSE">
+        <img src="https://img.shields.io/badge/License-MIT-green.svg">
+    </a>
+</p>
 
 <h2>Operating system support</h2>
 <p><code>le-chiffre</code> can be run on Linux, Windows and Mac OS X.</p>
@@ -69,6 +78,6 @@ pyinstaller --onefile src/le-chiffre.py
 </ul>
 
 ```bash
-sudo chmox +x dist/le-chiffre
+sudo chmod +x dist/le-chiffre
 dist/le-chiffre
 ```
