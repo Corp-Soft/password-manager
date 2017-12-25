@@ -102,25 +102,5 @@ le-chiffre
             <td>Generate random hash, store in encrypted file and copy to clipboard</td>
             <td><code>le-chiffre -g || generate {URL}</code></td>
         </tr>
-        <tr>
-            <td>Find necessary password for given URL and copy to clipboard</td>
-            <td><code>le-chiffre -f || find {URL}</code></td>
-        </tr>
-        <tr>
-            <td>List all available passwords</td>
-            <td><code>le-chiffre -l || list</code></td>
-        </tr>
-        <tr>
-            <td>Remove password for given URL</td>
-            <td><code>le-chiffre -r || remove {URL}</code></td>
-        </tr>
-        <tr>
-            <td>Print version information and quit</td>
-            <td><code>le-chiffre -v || version</code></td>
-        </tr>
-        <tr>
-            <td>Set minimum password length</td>
-            <td><code>le-chiffre set min_password_length {number}</code></td>
-        </tr>
     </tbody>
 </table>
