@@ -12,7 +12,7 @@ Options:
     -g, generate <url>               Generate random hash, store in encrypted file and copy to clipboard
     -f, find <url>                   Find necessary password for given URL and copy to clipboard
     -l, list                         List all available passwords
-    -r, remove <url>                 Remove url for given URL
+    -r, remove <url>                 Remove password for given URL
     -v, version                      Print version information and quit
     set min_password_length <number> Set minimum password length'''
 
