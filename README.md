@@ -1,11 +1,19 @@
 <h1 align="center">
     <img src="https://dewey.tailorbrands.com/production/brand_version_mockup_image/673/441186673_a4693e27-0973-4ad6-a875-7e165c0d8eee.png?cb=1512853920">
 </h1>
-<p>This tool is still in development mode.</p>
-<h2>Getting started</h2>
-<p>These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.</p>
-<h3>Installing on UNIX</h3>
-<p>First, you have to create application on Dropbox, go to <a href="https://www.dropbox.com/developers/apps">apps</a>, click <code>Create app</code>, call it <code>le-chiffre</code>, then click <code>Generate token</code>, you will get access token, next create file somewhere you will execute package from<code>settings.json</code>, and pass token there, e.g.</p>
+
+<h2>Operating system support</h2>
+<p><code>le-chiffre</code> can be run on Linux, Windows and Mac OS X.</p>
+
+<h2>Dependencies</h2>
+<ul>
+    <li>
+        <a href="http://sourceforge.net/projects/xclip/" rel="nofollow">xclip</a> for clipboard support
+    </li>
+</ul>
+
+<h3>Installing</h3>
+<p>First of all, you should create an application on Dropbox, go to <a href="https://www.dropbox.com/developers/apps" rel="nofollow">apps</a>, click <code>Create app</code>, call it <code>le-chiffre</code>, then click <code>Generate token</code>, you will get access token, next create file somewhere you will execute package from<code>settings.json</code>, and pass token there, e.g.</p>
 
 ```json
 {
@@ -13,27 +21,54 @@
 }
 ```
 
-<p>Make sure you have installed <code>xclip</code>, if not</p>
+<h4>Linux / Mac OS X</h4>
+<p>A binary package is available from the community repository.</p>
 
 ```bash
-$ sudo apt install xclip
+curl -L https://github.com/Corp-Soft/password-manager/releases/download/1.0.0/le-chiffre/le-chiffre-{Linux || Darwin}-x86_64 -o /usr/local/bin/le-chiffre
+sudo chmod +x /usr/local/bin/le-chiffre
 ```
 
-<p>Be sure to use python 3.x version and also install <code>pip</code> package manager specially for python 3.x</p>
+<p>Alternatively, you can manually assemble this package</p>
+
+<ul>
+    <li>Clone repository and change directory:</li>
+</ul>
 
 ```bash
-$ sudo apt install python3-pip
+git clone https://github.com/Corp-Soft/password-manager
+cd password-manager
 ```
 
-<p>Once you've ready to start, you have to clone this project and do the following</p>
+<ul>
+    <li>Be sure to use python 3.x version and also install pip package manager specially for python 3.x:</li>
+</ul>
 
 ```bash
-$ git clone https://github.com/Corp-Soft/password-manager.git
-$ cd password-manager
-$ sudo pip3 install pyinstaller
-$ pyinstaller --onefile src/le-chiffre.py // this will bundle python app and its dependencies into a single package
-$ sudo mv dist/le-chiffre ~ // move built package to home directory or anywhere you wanna execute it from
-$ cd ~
-$ sudo chmod +x ./le-chiffre
-$ ./le-chiffre // run package
+sudo apt install python3-pip
+```
+
+<ul>
+    <li>Install <code>pyinstaller</code> tool to bundle this package:</li>
+</ul>
+
+```bash
+sudo pip3 install pyinstaller
+```
+
+<ul>
+    <li>Bundle this application and its dependencies into a single package:</li>
+</ul>
+
+```bash
+pyinstaller --onefile src/le-chiffre.py
+```
+
+<ul>
+    <li>You will get binary file in <code>dist</code> folder, just change mode for execution and run:</li>
+</ul>
+
+```bash
+sudo chmox +x dist/le-chiffre
+dist/le-chiffre
 ```
