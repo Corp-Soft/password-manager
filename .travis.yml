@@ -1,13 +1,21 @@
 language: python
+dist: trusty
+
+addons:
+  apt:
+    packages:
+      - 'python3'
+      - 'python3-pip'
 
 python:
-  - '3.5'
-  - '3.6'
+  - 3.5
+  - 3.6
 
 before_install:
-  - sudo apt install python3-pip
+  - sudo apt-get update
 
 install:
-  - sudo pip3 install -r requirements.txt --use-mirrors
+  - pip3 install -r requirements.txt
 
-script: python3 -m unittest tests/tests.py
+script: 
+  - if [[$TRAVIS_PYTHON_VERSION == '3.5' || $TRAVIS_PYTHON_VERSION == '3.6']]; then python3 -m unittest tests/tests.py; fi
