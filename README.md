@@ -37,7 +37,7 @@
 <p>A binary package is available from the community repository.</p>
 
 ```bash
-sudo curl -L https://github.com/Corp-Soft/password-manager/releases/download/1.0.0/le-chiffre_x64-64 -o /usr/local/bin/le-chiffre
+sudo curl -L https://github.com/Corp-Soft/password-manager/releases/download/1.0.0/le-chiffre-x86_64 -o /usr/local/bin/le-chiffre
 sudo chmod +x /usr/local/bin/le-chiffre
 ```
 
