@@ -22,23 +22,16 @@
 </p>
 
 <h2>Operating system support</h2>
-<p><code>le-chiffre</code> can be run on Linux, Windows and Mac OS X.</p>
+<p><code>le-chiffre</code> can be run on Linux and Mac OS X.</p>
 
 <h2>Dependencies</h2>
 <ul>
     <li>
-        <a href="http://sourceforge.net/projects/xclip/" rel="nofollow">xclip</a> for clipboard support
+        <a href="http://sourceforge.net/projects/xclip/" rel="nofollow">xclip</a> for clipboard support (Linux)
     </li>
 </ul>
 
 <h3>Installing</h3>
-<p>First of all, you should create an application on Dropbox, go to <a href="https://www.dropbox.com/developers/apps" rel="nofollow">apps</a>, click <code>Create app</code>, call it <code>le-chiffre</code>, then click <code>Generate token</code>, you will get access token, next create file somewhere you will execute package from<code>settings.json</code>, and pass token there, e.g.</p>
-
-```json
-{
-    "token": "YOUR ACCESS TOKEN"
-}
-```
 
 <h4>Linux / Mac OS X</h4>
 <p>A binary package is available from the community repository.</p>
@@ -92,6 +85,20 @@ sudo chmod +x dist/le-chiffre
 dist/le-chiffre
 ```
 <h2>Usage</h2>
+
+<p>You can decide what storage to use for AES key - local or cloud, local storage is default, if you wanna use Dropbox:</p>
+
+```bash
+le-chiffre set storage dropbox
+```
+
+<p>Next, you should create an application on Dropbox, go to <a href="https://www.dropbox.com/developers/apps" rel="nofollow">apps</a>, click <code>Create app</code>, call it <code>le-chiffre</code>, then click <code>Generate token</code>, you will get access token, set this token to <code>le-chiffre</code> settings:</p>
+
+```bash
+le-chiffre set token YOUR_TOKEN
+```
+
+<p>Since now your key will be uploaded to cloud and stored there.</p>
 
 ```bash
 le-chiffre
