@@ -34,10 +34,10 @@ def copy_to_clipboard(password):
         os.system('echo {} | xclip -sel clip'.format(password))
     
     elif sys.platform == 'darwin':
-        pass
+        os.system('echo {} | tr -d "\n" | pbcopy'.format(password))
 
     elif sys.platform == 'win32' or sys.platform() == 'win64':
-        pass
+        os.system('echo {} | clip'.format(password))
 
     print('le-chiffre: Copied password to clipboard!')
 
