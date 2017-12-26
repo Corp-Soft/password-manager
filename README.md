@@ -17,6 +17,9 @@
 </a>
 </p>
 
+<p align="center">
+    <img src="https://i.imgur.com/svbTJx1.png">
+</p>
 
 <h2>Operating system support</h2>
 <p><code>le-chiffre</code> can be run on Linux, Windows and Mac OS X.</p>
