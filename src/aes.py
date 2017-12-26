@@ -1,6 +1,5 @@
 from hashlib import md5
-from base64 import b64decode
-from base64 import b64encode
+from base64 import b64decode, b64encode
 from Crypto import Random
 from Crypto.Cipher import AES
 

@@ -1,38 +1,40 @@
 import dropbox, json, os, sys
+from passwords import get_username
 
 def read_token():
-    if os.path.exists(os.getcwd() + '/settings.json'):
-        return json.load(open('settings.json'))['token']
-    else:
-        raise Exception('le-chiffre: Please create `settings.json` file and put `token` there!')
-        sys.exit(0)
+    username = get_username()
 
-def get_hash():
+    if os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
+        data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(username)))
+
+        if 'token' in data:
+            return data['token']
+            
+        else:
+            print('le-chiffre: Please setup token, use `set token YOUR_TOKEN`!')
+
+def get_key():
     client = dropbox.Dropbox(read_token())
 
     try:
-        md, res = client.files_download('/le-chiffre/hash')
+        md, res = client.files_download('/le-chiffre/key')
     except dropbox.exceptions.HttpError:
-        print('le-chiffre: Some HTTP error occured | tried to get hash from Dropbox!')
+        print('le-chiffre: Some HTTP error occured | tried to get key from Dropbox!')
         return None
     
-    return json.loads(res.content.decode('utf-8'))['hash']
+    return json.loads(res.content.decode('utf-8'))['key']
 
-def upload_hash(hash):
-    if type(hash) == str:
-        client = dropbox.Dropbox(read_token())
+def upload_key(key):
+    client = dropbox.Dropbox(read_token())
 
-        hash = json.dumps(dict(
-            hash=hash
-        )).encode()
+    key = json.dumps(dict(
+        key=key
+    )).encode()
 
-        try:
-            client.files_upload(hash, '/le-chiffre/hash')
-        except dropbox.exceptions.HttpError:
-            print('le-chiffre: Some HTTP error occured | tried to upload hash to Dropbox!')
-            return False
-
-        return True
-
-    else:
+    try:
+        client.files_upload(key, '/le-chiffre/key')
+    except dropbox.exceptions.HttpError:
+        print('le-chiffre: Some HTTP error occured | tried to upload hash to Dropbox!')
         return False
+
+    return True
