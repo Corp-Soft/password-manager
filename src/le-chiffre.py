@@ -1,7 +1,7 @@
 import sys, os, subprocess, json, api, random, string
 from aes import aes
 
-usage = '''le-chiffre 0.1.0
+usage = '''le-chiffre 1.0.0
 @overthesanity <arthurandrosovich@gmail.com>
 
 Usage: le-chiffre COMMAND
@@ -16,7 +16,7 @@ Options:
     -v, version                      Print version information and quit
     set min_password_length <number> Set minimum password length'''
 
-version = 'le-chiffre version 0.0.1@alpha'
+version = 'le-chiffre version 1.0.0'
 
 # get option and argument from list of arguments
 def parse_config(args):
