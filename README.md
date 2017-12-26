@@ -1,7 +1,9 @@
 <p align="center">
     <img src="https://dewey.tailorbrands.com/production/brand_version_mockup_image/673/441186673_a4693e27-0973-4ad6-a875-7e165c0d8eee.png?cb=1512853920">
 </p>
-<p align="center">A command line tool for generating random passwords</p>
+<p align="center">
+ This password manager application will help you to store all your passwords easily and safely using Advanced Encryption Standard (AES-256).
+</p>
 
 <hr>
 
