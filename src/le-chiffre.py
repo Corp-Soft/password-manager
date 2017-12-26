@@ -15,7 +15,9 @@ Options:
     -l, list                         List all available passwords
     -r, remove <url>                 Remove password for given URL
     -v, version                      Print version information and quit
-    set min_password_length <number> Set minimum password length'''
+    set min_password_length <number> Set minimum password length
+    set storage <local OR dropbox>    Set storage where to store AES key
+    set token <TOKEN>                Set token if you chose dropbox storage'''
 
 version = 'le-chiffre version 1.0.0'
 

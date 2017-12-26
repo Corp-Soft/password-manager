@@ -294,7 +294,7 @@ def set_token(token):
         settings_file.write(json.dumps(data, sort_keys=True, indent=4))
         settings_file.close()
 
-    if os.path.exists('/home/{}/.le-chiffre/key.enc'.format(username))
+    if os.path.exists('/home/{}/.le-chiffre/key.enc'.format(username)):
         key = open('/home/{}/.le-chiffre/key.enc'.format(username), 'r').read()
         api.upload_key(key)
 
