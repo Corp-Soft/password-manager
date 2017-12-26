@@ -7,9 +7,15 @@
 
 <hr>
 
-<a href="https://github.com/Corp-Soft/password-manager/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/License-MIT-green.svg">
-</a>
+<p>
+    <a href="https://github.com/Corp-Soft/password-manager/blob/master/LICENSE">
+        <img src="https://img.shields.io/badge/License-MIT-green.svg">
+    </a>
+
+    <a href="https://travis-ci.org/Corp-Soft/password-manager">
+        <img src="https://travis-ci.org/Corp-Soft/password-manager.svg?branch=master">
+    </a>
+</p>
 
 
 <h2>Operating system support</h2>
