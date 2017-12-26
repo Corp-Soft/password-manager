@@ -16,10 +16,17 @@ def get_aes_key():
         storage = get_storage_type()
 
         if storage == 'local':
-            return open('/home/{}/.le-chiffre/key.enc'.format(get_username()), 'r').read()
+            return open('/home/{}/.le-chiffre/key.enc'.format(username), 'r').read()
 
         elif storage == 'dropbox':
-            return api.get_key()
+            data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(username)))
+
+            if 'token' in data:
+                return api.get_key()
+
+            else:
+                print('le-chiffre: Please set token for dropbox!')
+                sys.exit(0)
 
 def copy_to_clipboard(password):
     if sys.platform == 'linux' or sys.platform == 'linux2':
