@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://dewey.tailorbrands.com/production/brand_version_mockup_image/673/441186673_a4693e27-0973-4ad6-a875-7e165c0d8eee.png?cb=1512853920">
+    <img src="https://dewey.tailorbrands.com/production/brand_version_mockup_image/365/463755365_f7ec8898-66d6-4a47-82db-9dc74f75c367.png?cb=1514282278">
 </p>
 <p align="center">
     Easily generate passwords, store them in encrypted file using AES algorithm and save key on Dropbox :closed_lock_with_key:
