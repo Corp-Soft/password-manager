@@ -114,3 +114,5 @@ le-chiffre
 | Remove password for given URL | <code>le-chiffre -r OR remove {URL}</code> |
 | Print version information and quit | <code>le-chiffre -v OR version</code> |
 | Set minimum password length | <code>le-chiffre set min_password_length {number}</code> |
+| Set storage type | <code>le-chiffre set storage {local OR dropbox}</code> |
+| Set token for cloud | <code>le-chiffre set token {TOKEN}</code> |
