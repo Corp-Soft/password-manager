@@ -79,7 +79,16 @@ def copy_to_clipboard(password):
     print('le-chiffre: Copied password to clipboard!')
 
 def get_storage_type():
+    '''Get storage property from settings
+    '''
     return json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))['storage']
+
+def load_passwords():
+    '''Load passwords if present from encoded file
+    '''
+    encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(get_username())).read()
+    key = get_aes_key()
+    return json.loads(aes(key).decrypt(encrypted))
 
 def generate_password(url):
     '''
@@ -101,10 +110,7 @@ def generate_password(url):
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(get_min_password_length()))
 
     if os.path.exists('/home/{}/.le-chiffre/passwords.enc'.format(username)):
-        encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
-
-        key = get_aes_key()
-        passwords = json.loads(aes(key).decrypt(encrypted))
+        passwords = load_passwords()
 
         for i in passwords:
             if i['url'] == url:
@@ -123,7 +129,6 @@ def generate_password(url):
         passwords_file.write(passwords.decode('utf-8'))
         passwords_file.close()
 
-        print('le-chiffre: Generated password for {0} => {1}'.format(url, random_password))
         copy_to_clipboard(random_password)
 
     else:
@@ -153,8 +158,9 @@ def generate_password(url):
         passwords_file.write(passwords.decode('utf-8'))
         passwords_file.close()
 
-        print('le-chiffre: Generated password for {0} => {1}'.format(url, random_password))
         copy_to_clipboard(random_password)
+
+    print('le-chiffre: Generated password for {0} => {1}'.format(url, random_password))
 
 def find_password(url):
     '''Tryna find password for given URL
@@ -164,10 +170,7 @@ def find_password(url):
 
     exit_if_no_default_dir('le-chiffre: You haven\'t generated any password yet to find anything!')
 
-    encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
-
-    key = get_aes_key()
-    passwords = json.loads(aes(key).decrypt(encrypted))
+    passwords = load_passwords()
 
     searchable_password = None
 
@@ -189,10 +192,7 @@ def list_passwords():
 
     exit_if_no_default_dir('le-chiffre: You haven\'t generated any password yet to list them!')
 
-    encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(get_username())).read()
-
-    key = get_aes_key()
-    passwords = json.loads(aes(key).decrypt(encrypted))
+    passwords = load_passwords()
 
     if len(passwords) == 0:
         print('le-chiffre: Sorry you\'ve got zero passwords generated!')
@@ -211,10 +211,7 @@ def remove_password(url):
 
     exit_if_no_default_dir('le-chiffre: You haven\'t generated any password yet to remove any!')
 
-    encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
-    key = get_aes_key()
-
-    passwords = json.loads(aes(key).decrypt(encrypted))
+    passwords = load_passwords()
     current_len = len(passwords)
 
     for i in range(len(passwords)):
