@@ -15,6 +15,10 @@
 <a href="https://travis-ci.org/Corp-Soft/password-manager">
     <img src="https://travis-ci.org/Corp-Soft/password-manager.svg">
 </a>
+
+<a href="https://scrutinizer-ci.com/g/Corp-Soft/password-manager">
+    <img src="https://scrutinizer-ci.com/g/Corp-Soft/password-manager/badges/quality-score.png?b=master">
+</a>
 </p>
 
 <p align="center">
