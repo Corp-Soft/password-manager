@@ -228,82 +228,77 @@ def remove_password(url):
     if current_len == len(passwords):
         print('le-chiffre: Sorry, I haven\'t found anything for that url!')
 
-def set_password_length(length):
-    '''Setup min length of generated password
+def set_settings(option, value):
+    '''Set necessary settings through this function like token or storage type
     '''
-    if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(get_username())):
-        make_default_dir_if_not_exists()
+    if option == 'storage':
+        if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(get_username())):
+            make_default_dir_if_not_exists()
 
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
-        settings_file.write(json.dumps(dict(
-            storage='local',
-            min_password_length=length
-        )))
-        settings_file.close()
+            settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
+            settings_file.write(json.dumps(dict(
+                storage=value,
+                min_password_length=10
+            )))
+            settings_file.close()
 
-    else:
-        data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))
+        else:
+            data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))
 
-        data['min_password_length'] = length
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
-        settings_file.write(json.dumps(data, sort_keys=True, indent=4))
-        settings_file.close()
+            data['storage'] = storage
+            settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
+            settings_file.write(json.dumps(data, sort_keys=True, indent=4))
+            settings_file.close()
 
-    print('le-chiffre: Established `min_password_length` to => {}'.format(length))
+        print('le-chiffre: Established `storage` to => {}'.format(storage))
 
-def set_storage_type(storage):
-    '''Setup storage type like `local` either `dropbox`
-    '''
-    if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(get_username())):
-        make_default_dir_if_not_exists()
+    elif option == 'token':
+        if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(get_username())):
+            make_default_dir_if_not_exists()
 
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
-        settings_file.write(json.dumps(dict(
-            storage=storage,
-            min_password_length=10
-        )))
-        settings_file.close()
+            settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
+            settings_file.write(json.dumps(dict(
+                storage='dropbox',
+                min_password_length=10,
+                token=value
+            )))
+            settings_file.close()
 
-    else:
-        data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))
+        else:
+            data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))
 
-        data['storage'] = storage
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
-        settings_file.write(json.dumps(data, sort_keys=True, indent=4))
-        settings_file.close()
+            data['token'] = token
+            settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
+            settings_file.write(json.dumps(data, sort_keys=True, indent=4))
+            settings_file.close()
 
-    print('le-chiffre: Established `storage` to => {}'.format(storage))
+        if os.path.exists('/home/{}/.le-chiffre/key.enc'.format(get_username())):
+            key = open('/home/{}/.le-chiffre/key.enc'.format(get_username()), 'r').read()
+            api.upload_key(key)
 
-def set_token(token):
-    '''Setup token if storage type is `dropbox`
-    '''
-    username = get_username()
+        else:
+            key = str(random.getrandbits(128))
+            api.upload_key(key)
 
-    if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
-        make_default_dir_if_not_exists()
+        print('le-chiffre: Established `token` to => {}'.format(token))
 
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(username), 'w')
-        settings_file.write(json.dumps(dict(
-            storage='dropbox',
-            min_password_length=10,
-            token=token
-        )))
-        settings_file.close()
+    elif option == 'min_password_length':
+        if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(get_username())):
+            make_default_dir_if_not_exists()
 
-    else:
-        data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(username)))
+            settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
+            settings_file.write(json.dumps(dict(
+                storage='local',
+                min_password_length=int(value)
+            )))
+            settings_file.close()
 
-        data['token'] = token
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(username), 'w')
-        settings_file.write(json.dumps(data, sort_keys=True, indent=4))
-        settings_file.close()
+        else:
+            data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))
 
-    if os.path.exists('/home/{}/.le-chiffre/key.enc'.format(username)):
-        key = open('/home/{}/.le-chiffre/key.enc'.format(username), 'r').read()
-        api.upload_key(key)
+            data['min_password_length'] = length
+            settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
+            settings_file.write(json.dumps(data, sort_keys=True, indent=4))
+            settings_file.close()
 
-    else:
-        key = str(random.getrandbits(128))
-        api.upload_key(key)
-
-    print('le-chiffre: Established `token` to => {}'.format(token))
+        print('le-chiffre: Established `min_password_length` to => {}'.format(length))

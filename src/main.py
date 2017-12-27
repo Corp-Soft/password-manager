@@ -30,12 +30,6 @@ def parse_config(args):
     argument = args[2]
     return option, argument
 
-def parse_url(url):
-    '''Check if package was called with valid URL
-    '''
-    url = url.split('.')
-    return len(url) > 1
-
 def main():
     '''Entry point
     '''
@@ -58,22 +52,13 @@ def main():
         option, argument = parse_config(args)
 
         if option == '-g' or option == 'generate':
-            if parse_url(argument):
-                passwords.generate_password(argument)
-            else:
-                print('le-chiffre: You\'ve provided invalid url!')
+            passwords.generate_password(argument)
 
         elif option == '-f' or option == 'find':
-            if parse_url(argument):
-                passwords.find_password(argument)
-            else:
-                print('le-chiffre: You\'ve provided invalid url!')
+            passwords.find_password(argument)
 
         elif option == '-r' or option == 'remove':
-            if parse_url(argument):
-                passwords.remove_password(argument)
-            else:
-                print('le-chiffre: You\'ve provided invalid url!')
+            passwords.remove_password(argument)
 
         else:
             print('le-chiffre: You\'ve provided incorrent option!')
@@ -81,14 +66,7 @@ def main():
     elif len(args) == 4:
         option, argument = parse_config(args[-3:])
 
-        if option == 'min_password_length':
-            passwords.set_password_length(int(argument))
-
-        elif option == 'storage':
-            passwords.set_storage_type(argument)
-
-        elif option == 'token':
-            passwords.set_token(argument)
+        password.set_settings(option, argument)
 
 if __name__ == '__main__':
     main()
