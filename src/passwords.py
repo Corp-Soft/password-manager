@@ -123,7 +123,7 @@ def generate_password(url):
         )
 
         passwords.append(chiffre)
-        passwords = aes(key).encrypt(json.dumps(passwords))
+        passwords = aes(get_aes_key()).encrypt(json.dumps(passwords))
 
         passwords_file = open('/home/{}/.le-chiffre/passwords.enc'.format(username), 'w')
         passwords_file.write(passwords.decode('utf-8'))
@@ -166,7 +166,6 @@ def find_password(url):
     '''Tryna find password for given URL
     '''
     print('le-chiffre: You\'re searching password for url {}'.format(url))
-    username = get_username()
 
     exit_if_no_default_dir('le-chiffre: You haven\'t generated any password yet to find anything!')
 
@@ -218,7 +217,7 @@ def remove_password(url):
         if passwords[i]['url'] == url:
             passwords.pop(i)
 
-            passwords = aes(key).encrypt(json.dumps(passwords))
+            passwords = aes(get_aes_key()).encrypt(json.dumps(passwords))
 
             passwords_file = open('/home/{}/.le-chiffre/passwords.enc'.format(username), 'w')
             passwords_file.write(passwords.decode('utf-8'))
