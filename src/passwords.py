@@ -111,7 +111,7 @@ def generate_password(url):
         copy_to_clipboard(random_password)
 
     else:
-        '''This key is necessary in AES algorithm
+        '''This key needed for AES encryption / decryption
         '''
         key = str(random.getrandbits(128))
 

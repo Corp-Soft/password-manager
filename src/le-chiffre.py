@@ -35,7 +35,7 @@ def parse_url(url):
     return len(url) > 1
 
 def main():
-    '''Entry point for the whole package
+    '''Entry point
     '''
     args = sys.argv
 
