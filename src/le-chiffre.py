@@ -1,9 +1,8 @@
 import sys
-import os
-import json
-import api
-from aes import aes
 import passwords
+'''
+This module is an entry point for the whole package
+'''
 
 usage = '''le-chiffre 1.0.0
 @overthesanity <arthurandrosovich@gmail.com>

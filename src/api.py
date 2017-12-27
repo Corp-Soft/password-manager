@@ -1,10 +1,15 @@
-import dropbox
 import json
 import os
-import sys
 from subprocess import getoutput
+import sys
+import dropbox
+'''
+Functions in this module are basically helpers to work with dropbox
+'''
 
 def read_token():
+    '''Read token from settings needed for dropbox client
+    '''
     username = getoutput('whoami')
 
     if os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
@@ -15,8 +20,14 @@ def read_token():
             
         else:
             print('le-chiffre: Please setup token, use `set token YOUR_TOKEN`!')
+            sys.exit(0)
+            return None
+
+    return None
 
 def get_key():
+    '''Try to download `key` file from cloud
+    '''
     client = dropbox.Dropbox(read_token())
 
     try:
@@ -28,6 +39,8 @@ def get_key():
     return json.loads(res.content.decode('utf-8'))['key']
 
 def upload_key(key):
+    '''Upload AES key to cloud
+    '''
     client = dropbox.Dropbox(read_token())
 
     key = json.dumps(dict(
