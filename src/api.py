@@ -1,8 +1,11 @@
-import dropbox, json, os, sys
-from passwords import get_username
+import dropbox
+import json
+import os
+import sys
+from subprocess import getoutput
 
 def read_token():
-    username = get_username()
+    username = getoutput('whoami')
 
     if os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
         data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(username)))

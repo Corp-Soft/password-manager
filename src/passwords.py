@@ -1,10 +1,16 @@
-import sys, subprocess, json, string, random, os, api
+import sys
+import json
+import string
+import random
+import os
+import api
+from subprocess import getoutput
 from aes import aes
 
 def get_username():
     '''Get username of Linux/Mac user using `whoami` command
     '''
-    return subprocess.getoutput('whoami')
+    return getoutput('whoami')
 
 def get_min_password_length():
     '''Read `min_password_length` property from json, otherwise default pass length is 10
