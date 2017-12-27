@@ -1,13 +1,32 @@
 import sys, subprocess, json, string, random, os, api
 from aes import aes
 
-# Get username of Linux/Mac user using `whoami` command
 def get_username():
+    '''Get username of Linux/Mac user using `whoami` command
+    '''
     return subprocess.getoutput('whoami')
 
-# read `min_password_length` property from json, otherwise default pass length is 10
 def get_min_password_length():
+    '''Read `min_password_length` property from json, otherwise default pass length is 10
+    '''
     return json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))['min_password_length']
+
+def exit_if_no_default_dir(message):
+    '''If user wants to list passwords or find something w/e generating any - we should exit from process
+    '''
+    username = get_username()
+
+    if not os.path.exists('/home/{}/.le-chiffre'.format(username)):
+        print(message)
+        sys.exit(0)
+
+def make_default_dir_if_not_exists():
+    '''Default directory for storing passwords is `/home/{username}/.le-chiffre`
+    '''
+    username = get_username()
+
+    if not os.path.exists('/home/{}/.le-chiffre'.format(username)):
+        os.makedirs('/home/{}/.le-chiffre'.format(username))
 
 def get_aes_key():
     username = get_username()
@@ -29,14 +48,13 @@ def get_aes_key():
                 sys.exit(0)
 
 def copy_to_clipboard(password):
+    '''Copy generated or found password to clipboard
+    '''
     if sys.platform == 'linux' or sys.platform == 'linux2':
         os.system('echo {} | xclip -sel clip'.format(password))
 
     elif sys.platform == 'darwin':
         os.system('echo {} | tr -d "\n" | pbcopy'.format(password))
-
-    elif sys.platform == 'win32' or sys.platform == 'win64':
-        os.system('echo {} | clip'.format(password))
 
     print('le-chiffre: Copied password to clipboard!')
 
@@ -44,190 +62,176 @@ def get_storage_type():
     return json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))['storage']
 
 def generate_password(url):
-    # Linux and Mac OS X basically have the same folders structure, we only need `/home/username` directory
-    if sys.platform == 'linux' or sys.platform == 'linux2' or sys.platform == 'darwin':
-        # If storage is local - thus AES key is also stored locally
-        username = get_username()
+    '''Linux and Mac OS X basically have the same folders structure, we only need `/home/username` directory
 
-        if not os.path.exists('/home/{}/.le-chiffre'.format(username)):
-            os.makedirs('/home/{}/.le-chiffre'.format(username))
+    If storage is local - thus AES key is also stored locally
+    '''
+    username = get_username()
 
-        if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
-            settings = dict(
-                storage='local',
-                min_password_length=10
-            )
+    make_default_dir_if_not_exists()
 
-            settings_file = open('/home/{}/.le-chiffre/settings.json'.format(username), 'w')
-            settings_file.write(json.dumps(settings))
-            settings_file.close()
+    if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
+        settings = dict(
+            storage='local',
+            min_password_length=10
+        )
 
-        random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(get_min_password_length()))
+        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(username), 'w')
+        settings_file.write(json.dumps(settings))
+        settings_file.close()
 
-        # If user generates password not the first time
-        if os.path.exists('/home/{}/.le-chiffre/passwords.enc'.format(username)):
-            encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
+    random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(get_min_password_length()))
 
-            key = get_aes_key()
-            passwords = json.loads(aes(key).decrypt(encrypted))
-
-            for i in passwords:
-                if i['url'] == url:
-                    print('le-chiffre: Password for that url is already generated!')
-                    sys.exit(0)
-
-            chiffre = dict(
-                password=random_password,
-                url=url
-            )
-
-            passwords.append(chiffre)
-            passwords = aes(key).encrypt(json.dumps(passwords))
-
-            passwords_file = open('/home/{}/.le-chiffre/passwords.enc'.format(username), 'w')
-            passwords_file.write(passwords.decode('utf-8'))
-            passwords_file.close()
-
-            print('le-chiffre: Generated password for {0} => {1}'.format(url, random_password))
-            copy_to_clipboard(random_password)
-
-        else:
-            # This key is necessary in AES algorithm
-            key = str(random.getrandbits(128))
-
-            storage = get_storage_type()
-
-            if storage == 'local':
-                key_file = open('/home/{}/.le-chiffre/key.enc'.format(username), 'w')
-                key_file.write(key)
-                key_file.close()
-
-            elif storage == 'dropbox':
-                api.upload_key(key)
-
-            passwords = list()
-
-            chiffre = dict(
-                password=random_password,
-                url=url
-            )
-
-            passwords.append(chiffre)
-
-            # First we stringify list with dict, then we encrypt this string
-            passwords = aes(key).encrypt(json.dumps(passwords))
-
-            # Write this encrypted string to file
-            passwords_file = open('/home/{}/.le-chiffre/passwords.enc'.format(username), 'w')
-            passwords_file.write(passwords.decode('utf-8'))
-            passwords_file.close()
-
-            print('le-chiffre: Generated password for {0} => {1}'.format(url, random_password))
-            copy_to_clipboard(random_password)
-
-    elif sys.platform == 'win32' or sys.platform == 'win64':
-        pass
-
-# Tryna find password for given URL
-def find_password(url):
-    if sys.platform == 'linux' or sys.platform == 'linux2' or sys.platform == 'darwin':
-        print('le-chiffre: You\'re searching password for url {}'.format(url))
-        username = get_username()
-
-        if not os.path.exists('/home/{}/.le-chiffre'.format(username)):
-            print('le-chiffre: You haven\'t generated any password yet to find anything!')
-            sys.exit(0)
-
+    '''If user generates password not the first time
+    '''
+    if os.path.exists('/home/{}/.le-chiffre/passwords.enc'.format(username)):
         encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
 
         key = get_aes_key()
         passwords = json.loads(aes(key).decrypt(encrypted))
-
-        searchable_password = None
 
         for i in passwords:
             if i['url'] == url:
-                searchable_password = i['password']
+                print('le-chiffre: Password for that url is already generated!')
+                sys.exit(0)
 
-        if searchable_password is not None and len(searchable_password) > 0:
-            print('le-chiffre: I\'ve found {}'.format(searchable_password))
-            copy_to_clipboard(searchable_password)
-        else:
-            print('le-chiffre: Sorry, I haven\'t found anything for that url!')
+        chiffre = dict(
+            password=random_password,
+            url=url
+        )
 
+        passwords.append(chiffre)
+        passwords = aes(key).encrypt(json.dumps(passwords))
 
-    elif sys.platform == 'win32' or sys.platform == 'win64':
-        pass
+        passwords_file = open('/home/{}/.le-chiffre/passwords.enc'.format(username), 'w')
+        passwords_file.write(passwords.decode('utf-8'))
+        passwords_file.close()
 
-# List all available passwords
+        print('le-chiffre: Generated password for {0} => {1}'.format(url, random_password))
+        copy_to_clipboard(random_password)
+
+    else:
+        '''This key is necessary in AES algorithm
+        '''
+        key = str(random.getrandbits(128))
+
+        storage = get_storage_type()
+
+        if storage == 'local':
+            key_file = open('/home/{}/.le-chiffre/key.enc'.format(username), 'w')
+            key_file.write(key)
+            key_file.close()
+
+        elif storage == 'dropbox':
+            api.upload_key(key)
+
+        passwords = list()
+
+        chiffre = dict(
+            password=random_password,
+            url=url
+        )
+
+        passwords.append(chiffre)
+
+        '''First we stringify list with dict, then we encrypt this string
+        '''
+        passwords = aes(key).encrypt(json.dumps(passwords))
+
+        '''Write this encrypted string to file
+        '''
+        passwords_file = open('/home/{}/.le-chiffre/passwords.enc'.format(username), 'w')
+        passwords_file.write(passwords.decode('utf-8'))
+        passwords_file.close()
+
+        print('le-chiffre: Generated password for {0} => {1}'.format(url, random_password))
+        copy_to_clipboard(random_password)
+
+def find_password(url):
+    '''Tryna find password for given URL
+    '''
+    print('le-chiffre: You\'re searching password for url {}'.format(url))
+    username = get_username()
+
+    exit_if_no_default_dir('le-chiffre: You haven\'t generated any password yet to find anything!')
+
+    encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
+
+    key = get_aes_key()
+    passwords = json.loads(aes(key).decrypt(encrypted))
+
+    searchable_password = None
+
+    for i in passwords:
+        if i['url'] == url:
+            searchable_password = i['password']
+
+    if searchable_password is not None:
+        print('le-chiffre: I\'ve found {}'.format(searchable_password))
+        copy_to_clipboard(searchable_password)
+
+    else:
+        print('le-chiffre: Sorry, I haven\'t found anything for that url!')
+
 def list_passwords():
-    if sys.platform == 'linux' or sys.platform == 'linux2' or sys.platform == 'darwin':
-        username = get_username()
+    '''List all available passwords
+    '''
+    username = get_username()
 
-        if not os.path.exists('/home/{}/.le-chiffre'.format(username)):
-            print('le-chiffre: You haven\'t generated any password yet to list them!')
-            sys.exit(0)
+    print('le-chiffre: List all passwords!')
 
-        print('le-chiffre: List all passwords!')
+    exit_if_no_default_dir('le-chiffre: You haven\'t generated any password yet to list them!')
 
-        encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
+    encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
 
-        key = get_aes_key()
-        passwords = json.loads(aes(key).decrypt(encrypted))
+    key = get_aes_key()
+    passwords = json.loads(aes(key).decrypt(encrypted))
 
-        if len(passwords) == 0:
-            print('le-chiffre: Sorry you\'ve got zero passwords generated!')
+    if len(passwords) == 0:
+        print('le-chiffre: Sorry you\'ve got zero passwords generated!')
 
-        else:
-            for i in passwords:
-                password = i['password']
-                url = i['url']
-                print('le-chiffre: password => {0}, url => {1}'.format(password, url))
+    else:
+        for i in passwords:
+            password = i['password']
+            url = i['url']
+            print('le-chiffre: password => {0}, url => {1}'.format(password, url))
 
-    elif sys.platform == 'win32' or sys.platform == 'win64':
-        pass
-
-# Remove password if present for given URL
 def remove_password(url):
-    if sys.platform == 'linux' or sys.platform == 'linux2' or sys.platform == 'darwin':
-        print('le-chiffre: You wanna delete password for url => {}'.format(url))
-        username = get_username()
+    '''Remove password if present for given URL
+    '''
+    print('le-chiffre: You wanna delete password for url => {}'.format(url))
+    username = get_username()
 
-        if not os.path.exists('/home/{}/.le-chiffre'.format(username)):
-            print('le-chiffre: You haven\'t generated any password yet to remove any!')
-            sys.exit(0)
+    exit_if_no_default_dir('le-chiffre: You haven\'t generated any password yet to remove any!')
 
-        encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
-        key = get_aes_key()
+    encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
+    key = get_aes_key()
 
-        passwords = json.loads(aes(key).decrypt(encrypted))
-        current_len = len(passwords)
+    passwords = json.loads(aes(key).decrypt(encrypted))
+    current_len = len(passwords)
 
-        for i in range(len(passwords)):
-            if passwords[i]['url'] == url:
-                passwords.pop(i)
+    for i in range(len(passwords)):
+        if passwords[i]['url'] == url:
+            passwords.pop(i)
 
-                passwords = aes(key).encrypt(json.dumps(passwords))
+            passwords = aes(key).encrypt(json.dumps(passwords))
 
-                passwords_file = open('/home/{}/.le-chiffre/passwords.enc'.format(username), 'w')
-                passwords_file.write(passwords.decode('utf-8'))
-                passwords_file.close()
+            passwords_file = open('/home/{}/.le-chiffre/passwords.enc'.format(username), 'w')
+            passwords_file.write(passwords.decode('utf-8'))
+            passwords_file.close()
 
-                print('le-chiffre: Deleted password for url => {}'.format(url))
+            print('le-chiffre: Deleted password for url => {}'.format(url))
 
-        if current_len == len(passwords):
-            print('le-chiffre: Sorry, I haven\'t found anything for that url!')
+    if current_len == len(passwords):
+        print('le-chiffre: Sorry, I haven\'t found anything for that url!')
 
-    elif sys.platform == 'win32' or sys.platform == 'win64':
-        pass
-
-# Setup min length of generated password
 def set_password_length(length):
+    '''Setup min length of generated password
+    '''
     username = get_username()
 
     if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
-        if not os.path.exists('/home/{}/.le-chiffre'.format(username)):
-            os.makedirs('/home/{}/.le-chiffre'.format(username))
+        make_default_dir_if_not_exists()
 
         settings = dict(
             storage='local',
@@ -248,13 +252,13 @@ def set_password_length(length):
 
     print('le-chiffre: Established `min_password_length` to => {}'.format(length))
 
-# Setup storage type like `local` either `dropbox`
 def set_storage_type(storage):
+    '''Setup storage type like `local` either `dropbox`
+    '''
     username = get_username()
 
     if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
-        if not os.path.exists('/home/{}/.le-chiffre'.format(username)):
-            os.makedirs('/home/{}/.le-chiffre'.format(username))
+        make_default_dir_if_not_exists()
 
         settings = dict(
             storage=storage,
@@ -275,13 +279,13 @@ def set_storage_type(storage):
 
     print('le-chiffre: Established `storage` to => {}'.format(storage))
 
-# Setup token if storage type is `dropbox`
 def set_token(token):
+    '''Setup token if storage type is `dropbox`
+    '''
     username = get_username()
 
     if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
-        if not os.path.exists('/home/{}/.le-chiffre'.format(username)):
-            os.makedirs('/home/{}/.le-chiffre'.format(username))
+        make_default_dir_if_not_exists()
 
         settings = dict(
             storage='dropbox',

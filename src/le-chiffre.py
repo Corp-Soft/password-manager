@@ -21,24 +21,27 @@ Options:
 
 version = 'le-chiffre version 1.0.0'
 
-# Get option and argument from list of arguments
 def parse_config(args):
+    '''Get options and argument from list of arguments
+    '''
     option = args[1]
     argument = args[2]
     return option, argument
 
-# Check if package was called with valid URL
 def parse_url(url):
+    '''Check if package was called with valid URL
+    '''
     url = url.split('.')
     return len(url) > 1
 
-def main(): 
+def main():
+    '''Entry point for the whole package
+    '''
     args = sys.argv
 
     if len(args) == 1:
         print(usage)
 
-    # Check if one option was given in command line
     elif len(args) == 2:
         if args[1] == '-l' or args[1] == 'list':
             passwords.list_passwords()
@@ -49,9 +52,6 @@ def main():
         else:
             print('le-chiffre: Invalid option!')
 
-    # Check if 2 options were given in command line
-    # e.g. le-chiffre generate <url>
-    # name of executed file is always the first argument
     elif len(args) == 3:
         option, argument = parse_config(args)
 
@@ -76,7 +76,6 @@ def main():
         else:
             print('le-chiffre: You\'ve provided incorrent option!')
 
-    # Length of arguments for configuration
     elif len(args) == 4:
         option, argument = parse_config(args[-3:])
 
