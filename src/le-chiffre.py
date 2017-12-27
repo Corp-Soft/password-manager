@@ -1,8 +1,8 @@
-import sys
-import passwords
 '''
 This module is an entry point for the whole package
 '''
+import sys
+import passwords
 
 usage = '''le-chiffre 1.0.0
 @overthesanity <arthurandrosovich@gmail.com>

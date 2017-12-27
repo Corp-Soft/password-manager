@@ -1,11 +1,11 @@
+'''
+Functions in this module are basically helpers to work with dropbox
+'''
 import json
 import os
 from subprocess import getoutput
 import sys
 import dropbox
-'''
-Functions in this module are basically helpers to work with dropbox
-'''
 
 def read_token():
     '''Read token from settings needed for dropbox client

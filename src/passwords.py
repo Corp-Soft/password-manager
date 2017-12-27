@@ -275,7 +275,7 @@ def set_storage_type(storage):
         data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))
 
         data['storage'] = storage
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username(), 'w')
+        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
         settings_file.write(json.dumps(data, sort_keys=True, indent=4))
         settings_file.close()
 
