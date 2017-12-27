@@ -245,12 +245,12 @@ def set_settings(option, value):
         else:
             data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))
 
-            data['storage'] = storage
+            data['storage'] = value
             settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
             settings_file.write(json.dumps(data, sort_keys=True, indent=4))
             settings_file.close()
 
-        print('le-chiffre: Established `storage` to => {}'.format(storage))
+        print('le-chiffre: Established `storage` to => {}'.format(value))
 
     elif option == 'token':
         if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(get_username())):
@@ -267,7 +267,7 @@ def set_settings(option, value):
         else:
             data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))
 
-            data['token'] = token
+            data['token'] = value
             settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
             settings_file.write(json.dumps(data, sort_keys=True, indent=4))
             settings_file.close()
@@ -280,7 +280,7 @@ def set_settings(option, value):
             key = str(random.getrandbits(128))
             api.upload_key(key)
 
-        print('le-chiffre: Established `token` to => {}'.format(token))
+        print('le-chiffre: Established `token` to => {}'.format(value))
 
     elif option == 'min_password_length':
         if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(get_username())):
@@ -296,9 +296,9 @@ def set_settings(option, value):
         else:
             data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))
 
-            data['min_password_length'] = length
+            data['min_password_length'] = int(value)
             settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
             settings_file.write(json.dumps(data, sort_keys=True, indent=4))
             settings_file.close()
 
-        print('le-chiffre: Established `min_password_length` to => {}'.format(length))
+        print('le-chiffre: Established `min_password_length` to => {}'.format(value))

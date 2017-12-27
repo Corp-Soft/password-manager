@@ -66,7 +66,7 @@ def main():
     elif len(args) == 4:
         option, argument = parse_config(args[-3:])
 
-        password.set_settings(option, argument)
+        passwords.set_settings(option, argument)
 
 if __name__ == '__main__':
     main()
