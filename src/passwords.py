@@ -9,10 +9,13 @@ def get_username():
 def get_min_password_length():
     '''Read `min_password_length` property from json, otherwise default pass length is 10
     '''
-    return json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))['min_password_length']
+    username = get_username()
+    data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(username)))
+    return data['min_password_length']
 
 def exit_if_no_default_dir(message):
-    '''If user wants to list passwords or find something w/e generating any - we should exit from process
+    '''
+    Exit process if any password is generated
     '''
     username = get_username()
 
@@ -29,6 +32,12 @@ def make_default_dir_if_not_exists():
         os.makedirs('/home/{}/.le-chiffre'.format(username))
 
 def get_aes_key():
+    '''Get aes key based on storage type
+
+    If storage is `local` - package will try to search for key in `key.enc` file
+    
+    If storage is `dropbox` - package will try to download key from cloud
+    '''
     username = get_username()
 
     if os.path.exists('/home/{}/.le-chiffre'.format(username)):
@@ -82,8 +91,6 @@ def generate_password(url):
 
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(get_min_password_length()))
 
-    '''If user generates password not the first time
-    '''
     if os.path.exists('/home/{}/.le-chiffre/passwords.enc'.format(username)):
         encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
 
@@ -111,8 +118,6 @@ def generate_password(url):
         copy_to_clipboard(random_password)
 
     else:
-        '''This key needed for AES encryption / decryption
-        '''
         key = str(random.getrandbits(128))
 
         storage = get_storage_type()
@@ -133,13 +138,8 @@ def generate_password(url):
         )
 
         passwords.append(chiffre)
-
-        '''First we stringify list with dict, then we encrypt this string
-        '''
         passwords = aes(key).encrypt(json.dumps(passwords))
 
-        '''Write this encrypted string to file
-        '''
         passwords_file = open('/home/{}/.le-chiffre/passwords.enc'.format(username), 'w')
         passwords_file.write(passwords.decode('utf-8'))
         passwords_file.close()
@@ -176,13 +176,11 @@ def find_password(url):
 def list_passwords():
     '''List all available passwords
     '''
-    username = get_username()
-
     print('le-chiffre: List all passwords!')
 
     exit_if_no_default_dir('le-chiffre: You haven\'t generated any password yet to list them!')
 
-    encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(username)).read()
+    encrypted = open('/home/{}/.le-chiffre/passwords.enc'.format(get_username())).read()
 
     key = get_aes_key()
     passwords = json.loads(aes(key).decrypt(encrypted))
@@ -255,9 +253,7 @@ def set_password_length(length):
 def set_storage_type(storage):
     '''Setup storage type like `local` either `dropbox`
     '''
-    username = get_username()
-
-    if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
+    if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(get_username())):
         make_default_dir_if_not_exists()
 
         settings = dict(
@@ -265,15 +261,15 @@ def set_storage_type(storage):
             min_password_length=10
         )
 
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(username), 'w')
+        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
         settings_file.write(json.dumps(settings))
         settings_file.close()
 
     else:
-        data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(username)))
+        data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))
 
         data['storage'] = storage
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(username), 'w')
+        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username(), 'w')
         settings_file.write(json.dumps(data, sort_keys=True, indent=4))
         settings_file.close()
 
