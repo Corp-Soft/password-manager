@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-    <img src="https://i.imgur.com/dsK5ru0.png">
+    <img src="https://i.imgur.com/Ghv5q3K.png">
 </p>
 
 <h2>Operating system support</h2>
