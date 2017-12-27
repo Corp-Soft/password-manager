@@ -91,13 +91,11 @@ def generate_password(url):
     make_default_dir_if_not_exists()
 
     if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
-        settings = dict(
+        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(username), 'w')
+        settings_file.write(json.dumps(dict(
             storage='local',
             min_password_length=10
-        )
-
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(username), 'w')
-        settings_file.write(json.dumps(settings))
+        )))
         settings_file.close()
 
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(get_min_password_length()))
@@ -240,13 +238,11 @@ def set_password_length(length):
     if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(get_username())):
         make_default_dir_if_not_exists()
 
-        settings = dict(
+        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
+        settings_file.write(json.dumps(dict(
             storage='local',
             min_password_length=length
-        )
-
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
-        settings_file.write(json.dumps(settings))
+        )))
         settings_file.close()
 
     else:
@@ -265,13 +261,11 @@ def set_storage_type(storage):
     if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(get_username())):
         make_default_dir_if_not_exists()
 
-        settings = dict(
+        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
+        settings_file.write(json.dumps(dict(
             storage=storage,
             min_password_length=10
-        )
-
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
-        settings_file.write(json.dumps(settings))
+        )))
         settings_file.close()
 
     else:
@@ -292,14 +286,12 @@ def set_token(token):
     if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
         make_default_dir_if_not_exists()
 
-        settings = dict(
+        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(username), 'w')
+        settings_file.write(json.dumps(dict(
             storage='dropbox',
             min_password_length=10,
             token=token
-        )
-
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(username), 'w')
-        settings_file.write(json.dumps(settings))
+        )))
         settings_file.close()
 
     else:
