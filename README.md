@@ -73,7 +73,7 @@ sudo pip3 install pyinstaller
 </ul>
 
 ```bash
-pyinstaller --onefile src/le-chiffre.py
+pyinstaller --onefile src/main.py
 ```
 
 <ul>

@@ -1,10 +1,13 @@
+'''
+This module provides functions for managing all process
+'''
 import sys
 import json
 import string
 import random
 import os
-import api
 from subprocess import getoutput
+import api
 from aes import aes
 
 def get_username():
@@ -41,7 +44,7 @@ def get_aes_key():
     '''Get aes key based on storage type
 
     If storage is `local` - package will try to search for key in `key.enc` file
-    
+
     If storage is `dropbox` - package will try to download key from cloud
     '''
     username = get_username()
@@ -60,7 +63,9 @@ def get_aes_key():
 
             else:
                 print('le-chiffre: Please set token for dropbox!')
-                sys.exit(0)
+                return sys.exit(0)
+    
+    return sys.exit(0)
 
 def copy_to_clipboard(password):
     '''Copy generated or found password to clipboard
@@ -77,8 +82,8 @@ def get_storage_type():
     return json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))['storage']
 
 def generate_password(url):
-    '''Linux and Mac OS X basically have the same folders structure, we only need `/home/username` directory
-
+    '''
+    Linux and Mac OS X basically have the same folders structure, we only need `/home/username` directory
     If storage is local - thus AES key is also stored locally
     '''
     username = get_username()
@@ -232,9 +237,7 @@ def remove_password(url):
 def set_password_length(length):
     '''Setup min length of generated password
     '''
-    username = get_username()
-
-    if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(username)):
+    if not os.path.exists('/home/{}/.le-chiffre/settings.json'.format(get_username())):
         make_default_dir_if_not_exists()
 
         settings = dict(
@@ -242,15 +245,15 @@ def set_password_length(length):
             min_password_length=length
         )
 
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(username), 'w')
+        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
         settings_file.write(json.dumps(settings))
         settings_file.close()
 
     else:
-        data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(username)))
+        data = json.load(open('/home/{}/.le-chiffre/settings.json'.format(get_username())))
 
         data['min_password_length'] = length
-        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(username), 'w')
+        settings_file = open('/home/{}/.le-chiffre/settings.json'.format(get_username()), 'w')
         settings_file.write(json.dumps(data, sort_keys=True, indent=4))
         settings_file.close()
 
