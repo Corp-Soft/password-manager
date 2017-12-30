@@ -26,7 +26,7 @@
 </p>
 
 <p align="center">
-    <img src="https://i.imgur.com/Ghv5q3K.png">
+    <img src="https://i.imgur.com/5eBSKM7.png">
 </p>
 
 <h2>Operating system support</h2>
@@ -86,7 +86,8 @@ npm run build
 </ul>
 
 ```bash
-sudo chmod +x ./le-chiffre
+sudo mv ./le-chiffre /usr/local/bin/le-chiffre
+sudo chmod +x /usr/local/bin/le-chiffre
 ./le-chiffre
 ```
 <h2>Usage</h2>
