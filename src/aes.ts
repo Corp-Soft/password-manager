@@ -1,6 +1,6 @@
 import * as crypto from 'crypto';
 
-const algorithm = 'aes-256-ctr';
+const algorithm = 'aes-256-cbc';
 
 /**
  * 
@@ -9,10 +9,11 @@ const algorithm = 'aes-256-ctr';
  * @return string
  */
 export const encrypt = (key: string, data: string): string => {
-    const cipher: crypto.Cipher = crypto.createCipher(algorithm, key);
-    let crypted: string = cipher.update(data, 'utf8', 'hex');
-    crypted += cipher.final('hex');
-    return crypted;
+    const iv: Buffer = crypto.randomBytes(16);
+    const cipher: crypto.Cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encrypted: Buffer = cipher.update(new Buffer(data));
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+    return iv.toString('hex') + ':' + encrypted.toString('hex');
 };
 
 /**
@@ -22,8 +23,11 @@ export const encrypt = (key: string, data: string): string => {
  * @return string
  */
 export const decrypt = (key: string, data: string): string => {
-    const decipher: crypto.Decipher = crypto.createDecipher(algorithm, key);
-    let dec: string = decipher.update(data, 'hex', 'utf8');
-    dec += decipher.final('utf8');
-    return dec;
+    let textParts: Array<any> = data.split(':');
+    const iv: Buffer = new Buffer(textParts.shift(), 'hex');
+    const encryptedText: Buffer = new Buffer(textParts.join(':'), 'hex');
+    const decipher: crypto.Decipher = crypto.createDecipheriv(algorithm, new Buffer(key), iv);
+    let decrypted: Buffer = decipher.update(encryptedText);
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+    return decrypted.toString();
 };

@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+const generator = require('generate-password');
 
 import {
     Data,
@@ -84,7 +85,10 @@ export const setToken = async (token: string): Promise<void> => {
     if (keyExists) {
         key = fs.readFileSync(`/home/${username}/.le-chiffre/key.enc`, 'utf8');
     } else {
-        key = Math.random().toString(36).substring(2);
+        key = generator.generate({
+            length: 32,
+            numbers: true
+        });
     }
 
     uploadKey(key);

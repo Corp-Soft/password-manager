@@ -170,7 +170,10 @@ export const generatePassword = async (url: string): Promise<void> => {
             if (keyExists) {
                 key = fs.readFileSync(`/home/${username}/.le-chiffre/key.enc`, 'utf8');
             } else {
-                key = Math.random().toString(36).substring(2);
+                key = generator.generate({
+                    length: 32,
+                    numbers: true
+                });
 
                 const data: Data = await getSettings();
 

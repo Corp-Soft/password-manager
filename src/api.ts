@@ -60,6 +60,7 @@ export const uploadKey = async (key: string): Promise<any> => {
                 }
             });
 
+            console.log('le-chiffre: Uploaded current key to cloud!');
             return true;
         }
     } catch (e) {
