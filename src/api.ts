@@ -5,8 +5,7 @@ import { Data, getUsername, getSettings } from './passwords';
 /**
  * Read token from settings needed for dropbox client
  */
-export const readToken = async (): Promise<string> => {
-    const username: string = await getUsername();
+export const readToken = async (): Promise<any> => {
     const data: Data = await getSettings();
 
     if (data.hasOwnProperty('token')) {
@@ -53,6 +52,14 @@ export const uploadKey = async (key: string): Promise<any> => {
         });
 
         if ((res as any).hasOwnProperty('id') && (res as any).hasOwnProperty('name')) {
+            const username: string = await getUsername();
+
+            fs.exists(`/home/${username}/.le-chiffre/key.enc`, (exists: boolean) => {
+                if (exists) {
+                    fs.unlinkSync(`/home/${username}/.le-chiffre/key.enc`);
+                }
+            });
+
             return true;
         }
     } catch (e) {

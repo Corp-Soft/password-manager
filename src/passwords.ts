@@ -1,13 +1,14 @@
 import * as fs from 'fs';
 import * as util from 'util';
 const exec: Function = util.promisify(require('child_process').exec);
-import * as clipboardy from 'clipboardy';
-import * as generator from 'generate-password';
+const clipboardy = require('clipboardy');
+const generator = require('generate-password');
 
 import {
     encrypt,
     decrypt
 } from './aes';
+import { getKey } from './api';
 
 export type Data = {
     storage: string,
@@ -24,7 +25,7 @@ type Chiffre = {
  * Get username of Linux/Mac user using `whoami` command
  */
 export async function getUsername(): Promise<string> {
-    const { stdout, stderr } = await exec('whoami');
+    const { stdout } = await exec('whoami');
     return stdout.replace('\n', '');
 }
 
@@ -41,7 +42,7 @@ export async function getSettings(): Promise<Data> {
  * If storage is `local` - package will try to search for key in `key.enc` file
  * If storage is `dropbox` - package will try to download key from cloud
  */
-async function getAESKey(): Promise<string> {
+async function getAESKey(): Promise<any> {
     const username: string = await getUsername();
     const exists: boolean = fs.existsSync(`/home/${username}/.le-chiffre`);
 
@@ -52,7 +53,7 @@ async function getAESKey(): Promise<string> {
             return fs.readFileSync(`/home/${username}/.le-chiffre/key.enc`, 'utf8');
         } else {
             if (data.hasOwnProperty('token')) {
-                return '123';
+                return await getKey();
             } else {
                 console.log('le-chiffre: Please set token for dropbox!');
                 process.exit();
@@ -72,7 +73,7 @@ async function getPasswords(): Promise<Array<Chiffre>> {
 }
 
 /**
- * 
+ * Make default invisible directory for storing encrypted data
  */
 export async function makeDefaultDir(): Promise<void> {
     const username: string = await getUsername();
@@ -203,8 +204,6 @@ export const generatePassword = async (url: string): Promise<void> => {
  */
 export const findPassword = async (url: string): Promise<void> => {
     console.log(`le-chiffre: You\'re searching password for url ${url}`);
-
-    const username: string = await getUsername();
 
     await exitIfNoDefaultDir('le-chiffre: You haven\'t generated any password yet to find anything!');
 
