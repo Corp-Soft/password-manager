@@ -67,7 +67,7 @@ npm i -g typescript@latest
 
 ```bash
 yarn install
-// or if you don't use yarn
+# or if you don't use yarn
 npm install
 ```
 
@@ -77,7 +77,7 @@ npm install
 
 ```bash
 yarn build
-// or
+# or
 npm run build
 ```
 
