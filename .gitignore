@@ -1,6 +1,2 @@
-__pycache__
 .vscode/
-*.json
-*.spec
-build/
-dist/
+node_modules/

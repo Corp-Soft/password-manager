@@ -1,2 +1,0 @@
-pycrypto==2.6.1
-dropbox==8.5.1
