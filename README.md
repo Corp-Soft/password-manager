@@ -9,7 +9,7 @@
 
 <p>
 <a href="https://github.com/Corp-Soft/password-manager/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/License-MIT-green.svg">
+    <img src="https://img.shields.io/badge/License-MIT-blue.svg">
 </a>
 
 <a href="https://travis-ci.org/Corp-Soft/password-manager">
@@ -18,6 +18,10 @@
 
 <a href="https://scrutinizer-ci.com/g/Corp-Soft/password-manager">
     <img src="https://scrutinizer-ci.com/g/Corp-Soft/password-manager/badges/quality-score.png?b=master">
+</a>
+
+<a href="https://badges.frapsoft.com/typescript/awesome/typescript.png?v=100">
+    <img src="https://badges.frapsoft.com/typescript/awesome/typescript.png?v=100">
 </a>
 </p>
 
