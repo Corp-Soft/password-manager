@@ -32,13 +32,6 @@
 <h2>Operating system support</h2>
 <p><code>le-chiffre</code> can be run on Linux and Mac OS X.</p>
 
-<h2>Dependencies</h2>
-<ul>
-    <li>
-        <a href="http://sourceforge.net/projects/xclip/" rel="nofollow">xclip</a> for clipboard support (Linux)
-    </li>
-</ul>
-
 <h3>Installing</h3>
 
 <h4>Linux / Mac OS X</h4>
@@ -61,19 +54,21 @@ cd password-manager
 ```
 
 <ul>
-    <li>Be sure to use python 3.x version and also install pip package manager specially for python 3.x:</li>
+    <li>Be sure to install <code>typescript</code> globally:</li>
 </ul>
 
 ```bash
-sudo apt install python3-pip
+npm i -g typescript@latest
 ```
 
 <ul>
-    <li>Install <code>pyinstaller</code> tool to bundle this package:</li>
+    <li>Install necessary dependencies for this project also <code>nexe</code> bundler:</li>
 </ul>
 
 ```bash
-sudo pip3 install pyinstaller
+yarn install
+// or if you don't use yarn
+npm install
 ```
 
 <ul>
@@ -81,35 +76,37 @@ sudo pip3 install pyinstaller
 </ul>
 
 ```bash
-pyinstaller --onefile src/main.py
+yarn build
+// or
+npm run build
 ```
 
 <ul>
-    <li>You will get binary file in <code>dist</code> folder, just change mode for execution and run:</li>
+    <li>You will get binary file in the root of folder:</li>
 </ul>
 
 ```bash
-sudo chmod +x dist/le-chiffre
-dist/le-chiffre
+sudo chmod +x ./le-chiffre
+./le-chiffre
 ```
 <h2>Usage</h2>
 
 <p>You can decide what storage to use for AES key - local or cloud, local storage is default, if you wanna use Dropbox:</p>
 
 ```bash
-le-chiffre set storage dropbox
+le-chiffre set-storage dropbox
 ```
 
 <p>Next, you should create an application on Dropbox, go to <a href="https://www.dropbox.com/developers/apps" rel="nofollow">apps</a>, click <code>Create app</code>, call it <code>le-chiffre</code>, then click <code>Generate token</code>, you will get access token, set this token to <code>le-chiffre</code> settings:</p>
 
 ```bash
-le-chiffre set token YOUR_TOKEN
+le-chiffre set-token YOUR_TOKEN
 ```
 
 <p>Since now your key will be uploaded to cloud and stored there.</p>
 
 ```bash
-le-chiffre
+le-chiffre --help
 ```
 
 <p>You can find all possible blueprints in the table below:</p>
@@ -121,6 +118,6 @@ le-chiffre
 | List all available passwords | <code>le-chiffre -l OR list</code> |
 | Remove password for given URL | <code>le-chiffre -r OR remove {URL}</code> |
 | Print version information and quit | <code>le-chiffre -v OR version</code> |
-| Set minimum password length | <code>le-chiffre set min_password_length {number}</code> |
-| Set storage type | <code>le-chiffre set storage {local OR dropbox}</code> |
-| Set token for cloud | <code>le-chiffre set token {TOKEN}</code> |
+| Set minimum password length | <code>le-chiffre set-length {number}</code> |
+| Set storage type | <code>le-chiffre set-storage {local OR dropbox}</code> |
+| Set token for cloud | <code>le-chiffre set-token {TOKEN}</code> |
