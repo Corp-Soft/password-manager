@@ -32,6 +32,13 @@
 <h2>Operating system support</h2>
 <p><code>le-chiffre</code> can be run on Linux and Mac OS X.</p>
 
+<h2>Dependendies</h2>
+<ul>
+    <li>
+        <code>xsel</code> for clipboard support (Linux)
+    </li>
+</ul>
+
 <h3>Installing</h3>
 
 <h4>Linux / Mac OS X</h4>
